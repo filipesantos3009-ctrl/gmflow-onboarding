@@ -39,6 +39,11 @@
             z-index: 100;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             border-bottom: none;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        header.hidden {
+            transform: translateY(-100%);
         }
 
         .header-content {
@@ -1334,6 +1339,24 @@
             let pageNum = Math.floor(window.scrollY / window.innerHeight) + 1;
             document.getElementById('page-indicator').textContent = 'Página ' + pageNum;
         });
+
+        // Header scroll behavior
+        let lastScrollTop = 0;
+        const header = document.querySelector('header');
+        
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Scrolling down & passed 100px
+                header.classList.add('hidden');
+            } else {
+                // Scrolling up
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }, false);
     </script>
 </body>
 </html>
