@@ -26,8 +26,91 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: #333;
-            background: white;
             line-height: 1.6;
+            background-color: #fafafa;
+            background-image:
+                linear-gradient(to right, rgba(10, 10, 10, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(10, 10, 10, 0.05) 1px, transparent 1px);
+            background-size: 130px 119px;
+            position: relative;
+            isolation: isolate;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -50;
+            pointer-events: none;
+            background:
+                radial-gradient(60rem 40rem at 85% 0%, rgba(121, 182, 247, 0.14), transparent 60%),
+                radial-gradient(50rem 35rem at 0% 20%, rgba(47, 127, 224, 0.08), transparent 60%),
+                radial-gradient(70rem 50rem at 50% 95%, rgba(121, 182, 247, 0.10), transparent 60%);
+        }
+
+        .grid-light {
+            position: absolute;
+            opacity: 0;
+            width: 2px;
+            height: 2px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -20;
+            box-shadow:
+                0 0 3px 1px rgba(255, 255, 255, 0.7),
+                0 0 10px 3px rgba(47, 127, 224, 0.35),
+                0 0 22px 7px rgba(47, 127, 224, 0.12);
+        }
+
+        .grid-light::after {
+            content: "";
+            position: absolute;
+            z-index: -20;
+        }
+
+        .grid-light.horizontal::after {
+            top: 0;
+            right: 100%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(to left, rgba(47, 127, 224, 0.45), transparent);
+            animation: trail-h var(--duration) ease-in-out forwards;
+        }
+
+        .grid-light.horizontal.reverse::after {
+            right: auto;
+            left: 100%;
+            background: linear-gradient(to right, rgba(47, 127, 224, 0.45), transparent);
+        }
+
+        .grid-light.vertical::after {
+            left: 0;
+            bottom: 100%;
+            width: 3px;
+            height: 0;
+            background: linear-gradient(to top, rgba(47, 127, 224, 0.45), transparent);
+            animation: trail-v var(--duration) ease-in-out forwards;
+        }
+
+        .grid-light.vertical.reverse::after {
+            bottom: auto;
+            top: 100%;
+            background: linear-gradient(to bottom, rgba(47, 127, 224, 0.45), transparent);
+        }
+
+        @keyframes trail-h {
+            0% { width: 0; }
+            25% { width: 80px; }
+            45% { width: 80px; }
+            100% { width: 0; }
+        }
+
+        @keyframes trail-v {
+            0% { height: 0; }
+            25% { height: 80px; }
+            45% { height: 80px; }
+            100% { height: 0; }
         }
 
         /* Header com Gradient */
@@ -47,18 +130,20 @@
         }
 
         .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 40px;
+            width: 100%;
+            padding: 0 5%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
+            box-sizing: border-box;
         }
 
         .logo img {
-            height: 36px;
+            height: 100%;
+            max-height: 44px;
             width: auto;
-            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+            filter: brightness(0) invert(1);
+            display: block;
         }
 
         .page-number {
@@ -67,9 +152,12 @@
 
         /* Container Principal */
         .container {
-            max-width: 1000px;
+            width: 100%;
             margin: 0 auto;
-            padding: 60px 40px;
+            padding: 60px 6%;
+            box-sizing: border-box;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(4px);
         }
 
         /* Cover Page */
@@ -80,10 +168,11 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: white;
+            background: rgba(255,255,255,0.82);
             padding: 60px 40px;
             margin-top: 0;
             border-top: none;
+            backdrop-filter: blur(2px);
         }
 
         .cover h1 {
@@ -129,7 +218,7 @@
             border: 2.5px solid var(--gm-purple);
             border-radius: 12px;
             padding: 40px;
-            max-width: 500px;
+            max-width: 100%;
             margin: 0 auto;
             text-align: center;
         }
@@ -241,7 +330,7 @@
             background: white;
             border-radius: 16px;
             padding: 40px;
-            max-width: 600px;
+            max-width: min(600px, 90vw);
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
@@ -750,7 +839,7 @@
             font-size: 16px;
         }
 
-        /* All-Company Meeting */
+        /* GM Meet */
         .meeting-box {
             background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(30, 144, 255, 0.08));
             border: 2.5px solid var(--gm-purple);
@@ -1032,6 +1121,72 @@
     </style>
 </head>
 <body>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const gridW = 130;
+            const gridH = 119;
+
+            const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            if (prefersReducedMotion) return;
+
+            function spawnLight() {
+                const light = document.createElement("div");
+                light.classList.add("grid-light");
+                document.body.appendChild(light);
+
+                const maxCols = Math.ceil(window.innerWidth / gridW);
+                const maxRows = Math.ceil(document.body.scrollHeight / gridH);
+
+                const startCol = Math.floor(Math.random() * maxCols);
+                const startRow = Math.floor(Math.random() * maxRows);
+
+                const startX = startCol * gridW - 1;
+                const startY = startRow * gridH - 1;
+
+                light.style.left = `${startX}px`;
+                light.style.top = `${startY}px`;
+
+                const isHorizontal = Math.random() > 0.5;
+                const distance = Math.floor(Math.random() * 3) + 1;
+                const direction = Math.random() > 0.5 ? 1 : -1;
+
+                if (isHorizontal) {
+                    light.classList.add("horizontal");
+                    if (direction < 0) light.classList.add("reverse");
+                } else {
+                    light.classList.add("vertical");
+                    if (direction < 0) light.classList.add("reverse");
+                }
+
+                let endX = startX;
+                let endY = startY;
+
+                if (isHorizontal) {
+                    endX = startX + distance * gridW * direction;
+                } else {
+                    endY = startY + distance * gridH * direction;
+                }
+
+                const duration = 500 + distance * 500;
+                light.style.setProperty("--duration", `${duration}ms`);
+
+                const animation = light.animate(
+                    [
+                        { opacity: 0, transform: "translate(0, 0)" },
+                        { opacity: 1, offset: 0.08 },
+                        { opacity: 1, offset: 0.98 },
+                        { opacity: 0, transform: `translate(${endX - startX}px, ${endY - startY}px)` },
+                    ],
+                    { duration: duration, easing: "ease-in-out", fill: "forwards" }
+                );
+
+                animation.onfinish = () => { light.remove(); };
+            }
+
+            setInterval(spawnLight, 150);
+            setInterval(spawnLight, 400);
+        });
+    </script>
     <!-- Header -->
     <header>
         <div class="header-content">
@@ -1075,7 +1230,7 @@
                 <li><a href="#section-4" onclick="smoothScroll(event,'section-4')"><span class="toc-num">🛠️</span><span><span class="toc-title">Ferramentas & Acesso</span><br><span class="toc-sub">Stack Tecnológico</span></span></a></li>
                 <li><a href="#section-5" onclick="smoothScroll(event,'section-5')"><span class="toc-num">💬</span><span><span class="toc-title">Como Nos Comunicamos</span><br><span class="toc-sub">Escalada e Reuniões</span></span></a></li>
                 <li><a href="#section-cultura" onclick="smoothScroll(event,'section-cultura')"><span class="toc-num">🧬</span><span><span class="toc-title">A Cultura GM Flow</span><br><span class="toc-sub">Como Somos a Trabalhar</span></span></a></li>
-                <li><a href="#section-6" onclick="smoothScroll(event,'section-6')"><span class="toc-num">📊</span><span><span class="toc-title">Do Lead ao Contrato</span><br><span class="toc-sub">Workflow de Vendas</span></span></a></li>
+                <li><a href="#section-6" onclick="smoothScroll(event,'section-6')"><span class="toc-num">📊</span><span><span class="toc-title">Da Lead ao Contrato</span><br><span class="toc-sub">Workflow de Vendas</span></span></a></li>
                 <li><a href="#section-7" onclick="smoothScroll(event,'section-7')"><span class="toc-num">📞</span><span><span class="toc-title">Quem Contactar</span><br><span class="toc-sub">Responsabilidades por Área</span></span></a></li>
                 <li><a href="#section-8" onclick="smoothScroll(event,'section-8')"><span class="toc-num">📋</span><span><span class="toc-title">Informação Administrativa</span><br><span class="toc-sub">Dados Pessoais</span></span></a></li>
                 <li><a href="#section-9" onclick="smoothScroll(event,'section-9')"><span class="toc-num">✅</span><span><span class="toc-title">Teu Primeiro Dia</span><br><span class="toc-sub">Checklist</span></span></a></li>
@@ -1187,20 +1342,67 @@
     <div class="container">
         <section id="section-2">
             <h2>2. O Nosso Cliente Ideal</h2>
-            
-            <h3>Quem é o Nosso ICP?</h3>
-            <p>Trabalhamos com B2B empresas que têm uma necessidade específica: otimizar e automatizar processos manuais repetitivos.</p>
-            <p>O nosso cliente ideal é uma empresa com 6–100 colaboradores em Portugal, que valoriza a eficiência operacional e está disposta a investir em tecnologia para poupar tempo e recursos.</p>
-            
-            <h3>Setores Prioritários</h3>
-            <p>Real estate, logistics, indústria, seguros, contabilidade, mediação de crédito.</p>
-            
-            <h3>Modelo de Negócio</h3>
-            <h4 style="color: var(--gm-purple); font-size: 18px; margin: 20px 0 10px 0;">Fase 1 — Consultoria (1.000€ + IVA)</h4>
-            <p>Análise profunda de 3–5 processos críticos usando framework EAOL (Eliminar/Otimizar/Automatizar/Manter Humano).</p>
-            
-            <h4 style="color: var(--gm-purple); font-size: 18px; margin: 20px 0 10px 0;">Fase 2 — Implementação</h4>
-            <p>Desenvolvimento custom, workflows n8n, integrações com sistemas existentes.</p>
+
+            <!-- ICP Cards -->
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin:28px 0;">
+                <div style="background:linear-gradient(135deg,rgba(138,43,226,0.06),rgba(30,144,255,0.03)); border:2px solid var(--border-gray); border-radius:12px; padding:24px; text-align:center;">
+                    <div style="font-size:36px; margin-bottom:10px;">🏢</div>
+                    <div style="font-weight:700; color:var(--dark-blue); margin-bottom:6px;">Dimensão</div>
+                    <div style="color:#555; font-size:14px; line-height:1.6;">Empresas B2B<br><strong>6–100 colaboradores</strong><br>em Portugal</div>
+                </div>
+                <div style="background:linear-gradient(135deg,rgba(138,43,226,0.06),rgba(30,144,255,0.03)); border:2px solid var(--border-gray); border-radius:12px; padding:24px; text-align:center;">
+                    <div style="font-size:36px; margin-bottom:10px;">⚙️</div>
+                    <div style="font-weight:700; color:var(--dark-blue); margin-bottom:6px;">Dor</div>
+                    <div style="color:#555; font-size:14px; line-height:1.6;">Processos manuais<br>repetitivos que consomem<br>tempo e recursos</div>
+                </div>
+                <div style="background:linear-gradient(135deg,rgba(138,43,226,0.06),rgba(30,144,255,0.03)); border:2px solid var(--border-gray); border-radius:12px; padding:24px; text-align:center;">
+                    <div style="font-size:36px; margin-bottom:10px;">🎯</div>
+                    <div style="font-weight:700; color:var(--dark-blue); margin-bottom:6px;">Mentalidade</div>
+                    <div style="color:#555; font-size:14px; line-height:1.6;">Valoriza eficiência<br>e está disposta a investir<br>em tecnologia</div>
+                </div>
+            </div>
+
+            <!-- Setores clicáveis -->
+            <h3 style="margin-bottom:16px;">Setores Prioritários</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:32px;">
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">🏠 Real Estate</span>
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">🚚 Logistics</span>
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">🏭 Indústria</span>
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">🛡️ Seguros</span>
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">📊 Contabilidade</span>
+                <span class="setor-tag" onclick="this.classList.toggle('active')" style="cursor:pointer; padding:8px 18px; border-radius:20px; border:2px solid var(--border-gray); font-size:14px; font-weight:600; transition:all 0.2s; color:var(--dark-blue); background:white;">💳 Mediação de Crédito</span>
+            </div>
+            <style>
+                .setor-tag.active { background: linear-gradient(135deg, var(--gm-purple), var(--accent-blue)) !important; color: white !important; border-color: transparent !important; transform: scale(1.05); }
+            </style>
+
+            <!-- Modelo de Negócio: toggle -->
+            <h3 style="margin-bottom:16px;">Modelo de Negócio</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div onclick="this.querySelector('.fase-body').style.display = this.querySelector('.fase-body').style.display==='none'?'block':'none'"
+                     style="border:2px solid var(--gm-purple); border-radius:12px; padding:24px; cursor:pointer; transition:all 0.2s; background:linear-gradient(135deg,rgba(138,43,226,0.05),white);">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:0;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:8px; padding:4px 12px; font-weight:700; font-size:13px; flex-shrink:0;">Fase 1</div>
+                        <div style="font-weight:700; color:var(--dark-blue); font-size:16px;">Consultoria</div>
+                        <div style="margin-left:auto; color:var(--gm-purple); font-weight:700; font-size:16px;">1.000€ +IVA</div>
+                    </div>
+                    <div class="fase-body" style="display:none; margin-top:16px; color:#555; font-size:14px; line-height:1.7;">
+                        Análise profunda de <strong>3–5 processos críticos</strong> usando o nosso framework <strong>EAOL</strong> (Eliminar / Otimizar / Automatizar / Manter Humano). O cliente recebe um documento detalhado com diagnóstico, prioridades e proposta de solução.
+                    </div>
+                </div>
+                <div onclick="this.querySelector('.fase-body').style.display = this.querySelector('.fase-body').style.display==='none'?'block':'none'"
+                     style="border:2px solid var(--accent-blue); border-radius:12px; padding:24px; cursor:pointer; transition:all 0.2s; background:linear-gradient(135deg,rgba(30,144,255,0.05),white);">
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:0;">
+                        <div style="background:linear-gradient(135deg,var(--accent-blue),#00C8FF); color:white; border-radius:8px; padding:4px 12px; font-weight:700; font-size:13px; flex-shrink:0;">Fase 2</div>
+                        <div style="font-weight:700; color:var(--dark-blue); font-size:16px;">Implementação</div>
+                        <div style="margin-left:auto; color:var(--accent-blue); font-weight:700; font-size:16px;">Custom</div>
+                    </div>
+                    <div class="fase-body" style="display:none; margin-top:16px; color:#555; font-size:14px; line-height:1.7;">
+                        Desenvolvimento custom, workflows <strong>n8n</strong>, integrações com sistemas existentes. Entrega na infraestrutura do cliente com documentação completa. Preço baseado no escopo definido na Fase 1.
+                    </div>
+                </div>
+            </div>
+            <p style="font-size:13px; color:#999; margin-top:12px; text-align:center;">👆 Clica em cada fase para saber mais</p>
         </section>
     </div>
 
@@ -1210,26 +1412,157 @@
     <div class="container">
         <section id="section-3">
             <h2>3. Quem é Quem</h2>
-            
-            <h3>Liderança</h3>
-            <p><strong>Guilherme Gomes</strong> — Founder & CEO<br><span style="color: #666;">Consultoria, Sales, Decisões Estratégicas</span></p>
-            
-            <p><strong>Mateus Aguiar</strong> — Founder & CTO<br><span style="color: #666;">Tecnologia, Arquitetura, Desenvolvimento</span></p>
-            
-            <h3>Operações</h3>
-            <p><strong>Filipe Almeida</strong> — Diretor Financeiro & Operações<br><span style="color: #666;">Gestão financeira, administrativa e operacional</span></p>
-            
-            <p><strong>Gonçalo Martins</strong> — Diretor de Operações<br><span style="color: #666;">Consultoria técnica, avaliações, funnel PRR</span></p>
-            
-            <h3>Comercial & Design</h3>
-            <p><strong>Rodrigo Ameixa</strong> — Sales Director<br><span style="color: #666;">Gestão de pipeline, negociações</span></p>
-            
-            <p><strong>José Torres</strong> — Design Director<br><span style="color: #666;">Design e experiência do utilizador</span></p>
-            
-            <h3>Equipa Técnica</h3>
-            <p><strong>PM Development:</strong> Miguel Pereira</p>
-            <p><strong>Developers:</strong> Simão Louré, Bernardo Carvalho, João Leal, Madalena Yang, Madalena Mota</p>
-            <p><strong>Consultores:</strong> Pedro Ventura, Gustavo Gonçalves, Tomás Mestre</p>
+            <p style="color:#666; margin-bottom:32px;">A estrutura da GM Flow organiza-se em torno dos dois founders — cada um com a sua esfera de influência direta.</p>
+
+            <style>
+                .org-tree { font-family: inherit; }
+                /* Nível 0 — Founders */
+                .org-founders { display:flex; justify-content:center; gap:40px; margin-bottom:0; }
+                .org-founder-col { display:flex; flex-direction:column; align-items:center; flex:1; max-width:50%; }
+                .org-card { border-radius:12px; padding:14px 20px; text-align:center; }
+                .org-card-founder { background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:14px; padding:16px 28px; text-align:center; min-width:160px; }
+                .org-card-founder .name { font-weight:800; font-size:17px; }
+                .org-card-founder .role { font-size:12px; opacity:0.85; margin-top:2px; }
+                /* Linha vertical do founder para os seus diretos */
+                .org-vline { width:2px; height:28px; background:linear-gradient(var(--gm-purple),var(--accent-blue)); margin:0 auto; }
+                /* Linha horizontal entre os dois diretos */
+                .org-hline-wrap { display:flex; align-items:center; justify-content:center; width:100%; }
+                .org-hline { flex:1; height:2px; }
+                .org-hline-purple { background:var(--gm-purple); }
+                .org-hline-blue { background:var(--accent-blue); }
+                /* Nível 1 — 2 diretos por founder */
+                .org-level1 { display:flex; gap:20px; justify-content:center; width:100%; }
+                .org-card-l1 { border:2px solid; border-radius:12px; padding:12px 16px; text-align:center; flex:1; }
+                .org-card-l1.purple { border-color:var(--gm-purple); background:rgba(138,43,226,0.05); }
+                .org-card-l1.blue { border-color:var(--accent-blue); background:rgba(30,144,255,0.05); }
+                .org-card-l1 .name { font-weight:700; font-size:14px; color:var(--dark-blue); }
+                .org-card-l1 .role { font-size:12px; color:#777; margin-top:3px; }
+                /* Vline de cada l1 para os seus subordinados */
+                .org-col-vline { width:2px; height:22px; margin:0 auto; }
+                .org-col-vline.purple { background:var(--gm-purple); }
+                .org-col-vline.blue { background:var(--accent-blue); }
+                /* Nível 2 — equipa */
+                .org-level2 { display:flex; gap:8px; justify-content:center; width:100%; flex-wrap:wrap; }
+                .org-chip { border-radius:20px; padding:5px 12px; font-size:12px; font-weight:600; }
+                .org-chip.purple { background:rgba(138,43,226,0.1); color:var(--gm-purple); border:1px solid rgba(138,43,226,0.3); }
+                .org-chip.blue { background:rgba(30,144,255,0.1); color:var(--accent-blue); border:1px solid rgba(30,144,255,0.3); }
+                /* Separador central */
+                .org-center-sep { width:3px; background:linear-gradient(var(--gm-purple),var(--accent-blue)); border-radius:2px; align-self:stretch; margin:0 20px; }
+            </style>
+
+            <div class="org-tree">
+
+                <!-- ═══ ROW 0: Founders ═══ -->
+                <div class="org-founders" style="margin-bottom:0;">
+                    <!-- Guilherme side -->
+                    <div class="org-founder-col">
+                        <div class="org-card-founder" style="background:linear-gradient(135deg,var(--gm-purple),#6a1ab0);">
+                            <div class="name">Guilherme Gomes</div>
+                            <div class="role">Founder & CEO · Sales · Estratégia</div>
+                        </div>
+                    </div>
+                    <!-- Mateus side -->
+                    <div class="org-founder-col">
+                        <div class="org-card-founder" style="background:linear-gradient(135deg,var(--accent-blue),#00C8FF);">
+                            <div class="name">Mateus Aguiar</div>
+                            <div class="role">Founder & CTO · Tecnologia · Arquitetura</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Connector founders → L1 ═══ -->
+                <div style="display:flex; gap:40px; justify-content:center;">
+                    <div style="flex:1; max-width:50%;">
+                        <div style="display:flex; justify-content:center; gap:20px;">
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                                <div class="org-vline" style="background:var(--gm-purple);"></div>
+                            </div>
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                                <div class="org-vline" style="background:var(--gm-purple);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex:1; max-width:50%;">
+                        <div style="display:flex; justify-content:center; gap:20px;">
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                                <div class="org-vline" style="background:var(--accent-blue);"></div>
+                            </div>
+                            <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+                                <div class="org-vline" style="background:var(--accent-blue);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ ROW 1: 4 diretos ═══ -->
+                <div style="display:flex; gap:40px; justify-content:center; margin-bottom:0;">
+                    <!-- Guilherme: Filipe + Rodrigo -->
+                    <div style="flex:1; max-width:50%; display:flex; gap:20px;">
+                        <div class="org-card-l1 purple" style="flex:1;">
+                            <div class="name">Filipe Almeida</div>
+                            <div class="role">Dir. Financeiro & Ops</div>
+                        </div>
+                        <div class="org-card-l1 purple" style="flex:1;">
+                            <div class="name">Rodrigo Ameixa</div>
+                            <div class="role">Sales Director</div>
+                        </div>
+                    </div>
+                    <!-- Mateus: Gonçalo + José -->
+                    <div style="flex:1; max-width:50%; display:flex; gap:20px;">
+                        <div class="org-card-l1 blue" style="flex:1;">
+                            <div class="name">Gonçalo Martins</div>
+                            <div class="role">Dir. Operações</div>
+                        </div>
+                        <div class="org-card-l1 blue" style="flex:1;">
+                            <div class="name">José Torres</div>
+                            <div class="role">Design Director</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══ Connector L1 → L2 ═══ -->
+                <div style="display:flex; gap:40px; justify-content:center;">
+                    <div style="flex:1; max-width:50%; display:flex; justify-content:center;">
+                        <div class="org-vline" style="background:var(--gm-purple);"></div>
+                    </div>
+                    <div style="flex:1; max-width:50%; display:flex; justify-content:center;">
+                        <div class="org-vline" style="background:var(--accent-blue);"></div>
+                    </div>
+                </div>
+
+                <!-- ═══ ROW 2: Equipa ═══ -->
+                <div style="display:flex; gap:40px; justify-content:center;">
+                    <!-- Guilherme side: Consultores + Cold Callers -->
+                    <div style="flex:1; max-width:50%; border:2px solid rgba(138,43,226,0.3); border-radius:14px; padding:18px; background:rgba(138,43,226,0.03);">
+                        <div style="font-size:12px; font-weight:700; color:var(--gm-purple); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">Consultores & Comerciais</div>
+                        <div class="org-level2">
+                            <span class="org-chip purple">Pedro Ventura</span>
+                            <span class="org-chip purple">Gustavo Gonçalves</span>
+                            <span class="org-chip purple">Tomás Mestre</span>
+                        </div>
+                        <div style="font-size:12px; font-weight:700; color:var(--gm-purple); text-transform:uppercase; letter-spacing:0.5px; margin:14px 0 10px 0;">Cold Caller</div>
+                        <div class="org-level2">
+                            <span class="org-chip purple">Manuel Nascimento</span>
+                        </div>
+                    </div>
+                    <!-- Mateus side: Dev team -->
+                    <div style="flex:1; max-width:50%; border:2px solid rgba(30,144,255,0.3); border-radius:14px; padding:18px; background:rgba(30,144,255,0.03);">
+                        <div style="font-size:12px; font-weight:700; color:var(--accent-blue); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">PM Development</div>
+                        <div class="org-level2" style="margin-bottom:14px;">
+                            <span class="org-chip blue">Miguel Pereira</span>
+                        </div>
+                        <div style="font-size:12px; font-weight:700; color:var(--accent-blue); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px;">Developers</div>
+                        <div class="org-level2">
+                            <span class="org-chip blue">Simão Louré</span>
+                            <span class="org-chip blue">Bernardo Carvalho</span>
+                            <span class="org-chip blue">João Leal</span>
+                            <span class="org-chip blue">Madalena Yang</span>
+                            <span class="org-chip blue">Madalena Mota</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /org-tree -->
         </section>
     </div>
 
@@ -1239,24 +1572,71 @@
     <div class="container">
         <section id="section-4">
             <h2>4. Ferramentas & Acesso</h2>
-            
-            <h3>Comunicação (Obrigatória)</h3>
-            <p><strong>Slack</strong> — Escritório virtual. Todas as decisões, updates, pedidos aqui.</p>
-            <p><strong>Google Calendar</strong> — Gestão de agenda e convites.</p>
-            <div class="highlight-box">
+
+            <style>
+                .tool-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0 28px; }
+                .tool-card { border:2px solid var(--border-gray); border-radius:12px; padding:18px 20px; display:flex; align-items:center; gap:14px; transition:all 0.2s; background:white; }
+                .tool-card:hover { border-color:var(--gm-purple); box-shadow:0 4px 14px rgba(138,43,226,0.12); transform:translateY(-1px); }
+                .tool-icon { font-size:28px; flex-shrink:0; }
+                .tool-info { flex:1; }
+                .tool-info strong { display:block; font-size:15px; color:var(--dark-blue); }
+                .tool-info span { font-size:12px; color:#888; }
+                .tool-btn { background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; flex-shrink:0; transition:opacity 0.2s; }
+                .tool-btn:hover { opacity:0.85; }
+                .tool-section-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--gm-purple); margin:20px 0 10px; }
+            </style>
+
+            <div class="tool-section-label">💬 Comunicação</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">💬</div>
+                    <div class="tool-info"><strong>Slack</strong><span>Escritório virtual — decisões, updates, pedidos</span></div>
+                    <a href="https://slack.com/signin" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📅</div>
+                    <div class="tool-info"><strong>Google Calendar</strong><span>Gestão de agenda e convites</span></div>
+                    <a href="https://calendar.google.com" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+            </div>
+            <div class="highlight-box" style="margin-bottom:20px;">
                 <strong>Importante:</strong> Não discutes trabalho fora do Slack. WhatsApp é apenas para emergências reais.
             </div>
-            
-            <h3>CRM & Database</h3>
-            <p><strong>Airtable</strong> — CRM de leads, pipeline, dados enriquecidos</p>
-            <p><strong>Notion</strong> — ERP interno (Empresas, Consultorias, Processos, Reuniões, Tarefas)</p>
-            
-            <h3>Desenvolvimento & Automação</h3>
-            <p><strong>GitHub</strong> — Repositórios privados (código, documentação)</p>
-            <p><strong>n8n</strong> — Plataforma open-source de automação de workflows</p>
-            <p><strong>Google Drive/Docs</strong> — Documentos colaborativos e specs técnicas</p>
-            
-            <div class="highlight-box">
+
+            <div class="tool-section-label">📋 CRM & Base de Dados</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🗃️</div>
+                    <div class="tool-info"><strong>Airtable</strong><span>CRM de leads, pipeline, dados enriquecidos</span></div>
+                    <a href="https://airtable.com" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📝</div>
+                    <div class="tool-info"><strong>Notion</strong><span>ERP interno — Empresas, Consultorias, Processos</span></div>
+                    <a href="https://notion.so" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+            </div>
+
+            <div class="tool-section-label">⚙️ Desenvolvimento & Automação</div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-icon">🐙</div>
+                    <div class="tool-info"><strong>GitHub</strong><span>Repositórios privados (código, documentação)</span></div>
+                    <a href="https://github.com" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">🔄</div>
+                    <div class="tool-info"><strong>n8n</strong><span>Automação de workflows open-source</span></div>
+                    <a href="https://n8ndevgm.gmflow.pt" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-icon">📁</div>
+                    <div class="tool-info"><strong>Google Drive</strong><span>Documentos colaborativos e specs técnicas</span></div>
+                    <a href="https://drive.google.com" target="_blank" class="tool-btn">Abrir</a>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top:8px;">
                 <strong>Primeiro Dia:</strong> Contacta Filipe para pedir acesso a todas estas ferramentas. Ele coordena tudo.
             </div>
         </section>
@@ -1269,15 +1649,61 @@
         <section id="section-5">
             <h2>5. Como Nos Comunicamos</h2>
             
-            <h3>Escalada de Urgência</h3>
-            <p><strong>Nível 1 — Não-urgente</strong><br>Slack mensagem privada → resposta em 24h</p>
-            <p><strong>Nível 2 — Urgente</strong><br>@mention Slack → resposta em 30 min</p>
-            <p><strong>Nível 3 — Emergência</strong><br>2º @mention → Telefone se sem resposta</p>
+            <h3>Escalada de Urgência no Slack</h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:20px 0 10px;">
+
+                <!-- Pesquisa antes de perguntar -->
+                <div style="border:2px solid var(--border-gray); border-radius:12px; overflow:hidden;">
+                    <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); padding:10px 16px; color:white; font-weight:700; font-size:14px; font-style:italic;">🔍 Pesquisa antes de perguntar</div>
+                    <div style="padding:16px; background:#f8f8f8;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:6px; padding:6px 12px; font-weight:700; font-size:13px; text-align:center; margin-bottom:10px;">Comandos</div>
+                        <p style="text-align:center; font-size:13px; font-weight:700; color:var(--dark-blue); margin-bottom:6px;">Ctrl + G &nbsp;|&nbsp; Command + G</p>
+                        <p style="font-size:12px; color:#666; text-align:center; line-height:1.5;">Efetua pesquisa no histórico de conversas — garante que não estás a fazer uma pergunta que já foi feita e respondida!</p>
+                    </div>
+                </div>
+
+                <!-- Pedido de Ajuda -->
+                <div style="border:2px solid var(--border-gray); border-radius:12px; overflow:hidden;">
+                    <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); padding:10px 16px; color:white; font-weight:700; font-size:14px; font-style:italic;">🆘 Pedido de Ajuda/Esclarecimento</div>
+                    <div style="padding:16px; background:#f8f8f8;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:6px; padding:6px 12px; font-weight:700; font-size:13px; text-align:center; margin-bottom:10px;">Template Mensagem</div>
+                        <p style="font-size:12px; color:#444; line-height:1.7; margin-bottom:8px;">@ o responsável<br>Urgência<br>Descrição do Problema<br>Contexto — Print/vídeo</p>
+                        <p style="font-size:11px; color:#888; border-top:1px solid #ddd; padding-top:8px; line-height:1.5;">No momento que estiver resolvido, a pessoa que pediu ajuda mete um emoji na mensagem ✍️</p>
+                    </div>
+                </div>
+
+                <!-- Grupo Sozinho -->
+                <div style="border:2px solid var(--border-gray); border-radius:12px; overflow:hidden;">
+                    <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); padding:10px 16px; color:white; font-weight:700; font-size:14px; font-style:italic;">🧍 Grupo Sozinho</div>
+                    <div style="padding:16px; background:#f8f8f8;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:6px; padding:6px 12px; font-weight:700; font-size:13px; text-align:center; margin-bottom:10px;">Bloco de notas</div>
+                        <p style="font-size:12px; color:#666; text-align:center; line-height:1.6;">A criação do grupo sozinho serve como bloco de notas para um local de tarefas/textos/scripts etc</p>
+                    </div>
+                </div>
+
+                <!-- Sinal de Vista -->
+                <div style="border:2px solid var(--border-gray); border-radius:12px; overflow:hidden;">
+                    <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); padding:10px 16px; color:white; font-weight:700; font-size:14px; font-style:italic;">👁️ Sinal de Vista</div>
+                    <div style="padding:16px; background:#f8f8f8;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:6px; padding:6px 12px; font-weight:700; font-size:13px; text-align:center; margin-bottom:10px;">☑️</div>
+                        <p style="font-size:12px; color:#666; text-align:center; line-height:1.6;">Este sinal de check tem como objetivo informar o resto das pessoas no grupo que a mensagem foi recebida, lida e entendida</p>
+                    </div>
+                </div>
+
+                <!-- Responder dentro da Resposta -->
+                <div style="border:2px solid var(--border-gray); border-radius:12px; overflow:hidden; grid-column:1/-1;">
+                    <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); padding:10px 16px; color:white; font-weight:700; font-size:14px; font-style:italic;">↩️ Responder dentro da Resposta</div>
+                    <div style="padding:16px; background:#f8f8f8;">
+                        <div style="background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; border-radius:6px; padding:6px 12px; font-weight:700; font-size:13px; text-align:center; margin-bottom:10px;">Threads</div>
+                        <p style="font-size:12px; color:#666; text-align:center; line-height:1.6;">Responder na conversa tem como objetivo manter o canal limpo, com as mensagens importantes visíveis e respostas em secções escondidas — evita o scroll extensivo para encontrar mensagens que foram enviadas à 3 dias</p>
+                    </div>
+                </div>
+            </div>
             
             <h3>Reuniões Fixas</h3>
             <div class="meeting-box">
                 <h4>☀️ Segunda-feira às 18:00</h4>
-                <div class="meeting-title">All-Company Meeting</div>
+                <div class="meeting-title">GM Meet</div>
                 <p>Toda a GM Flow (obrigatória).</p>
                 <p style="font-weight: 600; color: var(--gm-purple);">Atualizações • Celebrações • Decisões • Roadmap</p>
                 <p style="color: #666; font-size: 13px;">~30-45 minutos</p>
@@ -1339,10 +1765,10 @@
 
     <div class="page-break"></div>
 
-    <!-- Do Lead ao Contrato -->
+    <!-- Da Lead ao Contrato -->
     <div class="container">
         <section id="section-6">
-            <h2>6. Do Lead ao Contrato</h2>
+            <h2>6. Da Lead ao Contrato</h2>
             <p>O workflow de um Lead passa por uma jornada transformadora, onde cada etapa é crítica e estratégica:</p>
             
             <div class="timeline-container">
@@ -1420,37 +1846,70 @@
             <h2>7. Quem Contactar</h2>
             
             <h3>Responsabilidades por Área</h3>
-            <table class="responsibilities-table">
+            <style>
+                .contact-table { width:100%; border-collapse:collapse; font-size:14px; }
+                .contact-table th { background:linear-gradient(135deg,var(--gm-purple),var(--accent-blue)); color:white; padding:12px 16px; text-align:left; font-weight:700; }
+                .contact-table th:first-child { border-radius:10px 0 0 0; }
+                .contact-table th:last-child { border-radius:0 10px 0 0; }
+                .contact-table td { padding:12px 16px; border-bottom:1px solid var(--border-gray); vertical-align:top; }
+                .contact-table tr:last-child td { border-bottom:none; }
+                .contact-table tr:hover td { background:rgba(138,43,226,0.03); }
+                .contact-chip { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin:2px 2px 0 0; }
+                .slack-chip { background:rgba(74,21,75,0.1); color:#4a154b; }
+                .email-chip { background:rgba(30,144,255,0.1); color:var(--accent-blue); }
+            </style>
+            <table class="contact-table">
                 <thead>
-                    <tr>
-                        <th>Área</th>
-                        <th>Responsável</th>
-                    </tr>
+                    <tr><th>Área</th><th>Responsável</th><th>Contacto</th></tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Founders</strong></td>
-                        <td>Guilherme Gomes & Mateus Aguiar</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Development</strong></td>
-                        <td>Mateus Aguiar</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Consultoria</strong></td>
+                        <td><strong>Estratégia & Consultoria</strong></td>
                         <td>Guilherme Gomes</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @Guilherme Gomes</span><br>
+                            <span class="contact-chip email-chip">✉️ guilhermegomes@gmflow.pt</span>
+                        </td>
                     </tr>
                     <tr>
-                        <td><strong>Finanças</strong></td>
+                        <td><strong>Tecnologia & Development</strong></td>
+                        <td>Mateus Aguiar</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @Mateus Aguiar</span><br>
+                            <span class="contact-chip email-chip">✉️ mateusaguiar@gmflow.pt</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Finanças & Ops</strong></td>
                         <td>Filipe Almeida</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @Filipe Almeida</span><br>
+                            <span class="contact-chip email-chip">✉️ filipesantos3009@gmail.com</span>
+                        </td>
                     </tr>
                     <tr>
-                        <td><strong>Sales</strong></td>
+                        <td><strong>Sales & Pipeline</strong></td>
                         <td>Rodrigo Ameixa</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @Rodrigo Ameixa</span><br>
+                            <span class="contact-chip email-chip">✉️ rodrigoameixa@gmflow.pt</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Operações</strong></td>
+                        <td>Gonçalo Martins</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @Gonçalo Martins</span><br>
+                            <span class="contact-chip email-chip">✉️ goncalomartins@gmflow.pt</span>
+                        </td>
                     </tr>
                     <tr>
                         <td><strong>Design</strong></td>
                         <td>José Torres</td>
+                        <td>
+                            <span class="contact-chip slack-chip">💬 @José Torres</span><br>
+                            <span class="contact-chip email-chip">✉️ josetorres@gmflow.pt</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -1594,7 +2053,7 @@
                     <div class="checkbox" onclick="handleCheckbox(this)"></div>
                     <label for="check8">
                         <strong>Nota a Data</strong>
-                        <p>Segunda às 18h é All-Company (obrigatória).</p>
+                        <p>Segunda às 18h é GM Meet (obrigatória).</p>
                     </label>
                 </div>
 
@@ -1656,16 +2115,35 @@
             checkAllItems();
         }
 
+        function formIsComplete() {
+            const nome = document.getElementById('f-nome') ? document.getElementById('f-nome').value.trim() : '';
+            const email = document.getElementById('f-email') ? document.getElementById('f-email').value.trim() : '';
+            const telemovel = document.getElementById('f-telemovel') ? document.getElementById('f-telemovel').value.trim() : '';
+            const nif = document.getElementById('f-nif') ? document.getElementById('f-nif').value.trim() : '';
+            const morada = document.getElementById('f-morada') ? document.getElementById('f-morada').value.trim() : '';
+            const iban = document.getElementById('f-iban') ? document.getElementById('f-iban').value.trim() : '';
+            return nome && email && telemovel && nif && morada && iban;
+        }
+
         function checkAllItems() {
             const checkboxes = document.querySelectorAll('.checkbox');
             const allChecked = Array.from(checkboxes).every(cb => cb.classList.contains('checked'));
-            
-            if (allChecked) {
+            const formDone = formIsComplete();
+
+            if (allChecked && formDone) {
                 document.getElementById('completionMessage').classList.add('show');
             } else {
                 document.getElementById('completionMessage').classList.remove('show');
             }
         }
+
+        // Reavaliar quando formulário muda
+        document.addEventListener('DOMContentLoaded', function() {
+            ['f-nome','f-email','f-telemovel','f-nif','f-morada','f-iban'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.addEventListener('input', checkAllItems);
+            });
+        });
 
         document.addEventListener('scroll', function() {
             let pageNum = Math.floor(window.scrollY / window.innerHeight) + 1;
