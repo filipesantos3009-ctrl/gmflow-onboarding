@@ -1379,7 +1379,7 @@
 
             <!-- Modelo de Negócio: toggle -->
             <h3 style="margin-bottom:16px;">Modelo de Negócio</h3>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div id="fases-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
                 <div onclick="toggleFase(this)"
                      style="border:2px solid var(--gm-purple); border-radius:12px; padding:24px; cursor:pointer; transition:all 0.2s; background:linear-gradient(135deg,rgba(138,43,226,0.05),white);">
                     <div style="display:flex; align-items:center; gap:12px; margin-bottom:0;">
@@ -2099,13 +2099,19 @@
 
     <script>
         function toggleFase(el) {
-            // fecha todos os outros
-            document.querySelectorAll('.fase-body').forEach(function(b) {
-                if (b !== el.querySelector('.fase-body')) b.style.display = 'none';
+            var clickedBody = el.querySelector('.fase-body');
+            var isOpen = clickedBody.style.display === 'block';
+
+            // fecha todos dentro do grid
+            var grid = document.getElementById('fases-grid');
+            grid.querySelectorAll('.fase-body').forEach(function(b) {
+                b.style.display = 'none';
             });
-            // abre/fecha o clicado
-            var body = el.querySelector('.fase-body');
-            body.style.display = body.style.display === 'block' ? 'none' : 'block';
+
+            // só abre se estava fechado
+            if (!isOpen) {
+                clickedBody.style.display = 'block';
+            }
         }
 
         function toggleTimeline(element) {
