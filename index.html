@@ -1373,6 +1373,17 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
   box-shadow: 0 0 0 4px color-mix(in oklab, var(--g2) 16%, transparent);
 }
 
+/* Campo com erro de validação */
+.field.invalid label { color: var(--err-fg); }
+.field.invalid input {
+  border-color: var(--err-br);
+  background: var(--err-bg);
+}
+.field.invalid input:focus {
+  border-color: var(--err-fg);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--err-fg) 14%, transparent);
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1881,14 +1892,10 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <i class="tee" aria-hidden="true"><i></i><i></i></i>
         <div class="l1">
           <div class="card"><div class="name">Gonçalo Martins</div><div class="role">Dir. Operações</div></div>
-          <div class="card"><div class="name">José Torres</div><div class="role">Design Director</div></div>
+          <div class="card"><div class="name">Miguel Pereira</div><div class="role">PM Development</div></div>
         </div>
         <i class="stem" aria-hidden="true"></i>
         <div class="team">
-          <p class="label">PM Development</p>
-          <div class="people">
-            <span class="person">Miguel Pereira</span>
-          </div>
           <p class="label">Developers</p>
           <div class="people">
             <span class="person">Simão Louré</span>
@@ -2225,14 +2232,6 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
             <td data-l="Contacto"><div class="contacts">
               <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@Gonçalo Martins</span>
               <a class="tag-mail" href="mailto:goncalomartins@gmflow.pt"><span class="em" aria-hidden="true">✉️</span>goncalomartins@gmflow.pt</a>
-            </div></td>
-          </tr>
-          <tr>
-            <td data-l="Área"><span class="area">Design</span></td>
-            <td data-l="Responsável"><span class="who">José Torres</span></td>
-            <td data-l="Contacto"><div class="contacts">
-              <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@José Torres</span>
-              <a class="tag-mail" href="mailto:josetorres@gmflow.pt"><span class="em" aria-hidden="true">✉️</span>josetorres@gmflow.pt</a>
             </div></td>
           </tr>
         </tbody>
@@ -2597,6 +2596,12 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
   let submitted = false;
 
   const formIds = ['f-nome', 'f-email', 'f-telemovel', 'f-nif', 'f-morada', 'f-iban'];
+  // Nome legível de cada campo, tirado da própria etiqueta do formulário.
+  const LABEL = {};
+  formIds.forEach(id => {
+    const l = document.querySelector('label[for="' + id + '"]');
+    LABEL[id] = l ? l.textContent.replace('*', '').trim() : id;
+  });
   const formOk = () => submitted || formIds.every(id => { const el = $('#' + id); return el && el.value.trim(); });
 
   function refresh() {
@@ -2618,6 +2623,47 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     status.textContent = msg;
   };
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  const KEY_TO_ID = {
+    nome: 'f-nome', email: 'f-email', telemovel: 'f-telemovel',
+    nif: 'f-nif', morada: 'f-morada', iban: 'f-iban'
+  };
+
+  const clearInvalid = () => $$('.field.invalid').forEach(f => {
+    f.classList.remove('invalid');
+    const i = $('input', f);
+    if (i) i.removeAttribute('aria-invalid');
+  });
+
+  // Marca os campos em falta/errados e devolve o primeiro, para lhe dar foco.
+  function flag(ids) {
+    clearInvalid();
+    let first = null;
+    ids.forEach(id => {
+      const el = $('#' + id);
+      if (!el) return;
+      el.closest('.field').classList.add('invalid');
+      el.setAttribute('aria-invalid', 'true');
+      if (!first) first = el;
+    });
+    if (first) {
+      first.focus();
+      first.scrollIntoView({ block: 'center', behavior: reduced.matches ? 'auto' : 'smooth' });
+    }
+  }
+
+  // Ao corrigir, a marca desaparece de imediato.
+  Object.values(KEY_TO_ID).forEach(id => {
+    const el = $('#' + id);
+    if (el) el.addEventListener('input', () => {
+      const f = el.closest('.field');
+      if (f.classList.contains('invalid')) {
+        f.classList.remove('invalid');
+        el.removeAttribute('aria-invalid');
+      }
+    });
+  });
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const val = id => ($('#' + id) ? $('#' + id).value.trim() : '');
@@ -2632,13 +2678,18 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       curso: val('f-curso')
     };
 
-    const missing = formIds.find(id => !val(id));
-    if (missing) {
-      say('error', '⚠️ Por favor preenche todos os campos obrigatórios (*)');
-      const el = $('#' + missing);
-      el.focus();
+    const vazios = formIds.filter(id => !val(id));
+    if (vazios.length) {
+      say('error', '⚠️ Falta preencher: ' + vazios.map(id => LABEL[id]).join(', '));
+      flag(vazios);
       return;
     }
+    if (!EMAIL_RE.test(val('f-email'))) {
+      say('error', '⚠️ Email inválido — falta o @ ou o domínio (exemplo: nome@gmflow.pt)');
+      flag(['f-email']);
+      return;
+    }
+    clearInvalid();
 
     btn.disabled = true;
     btnText.textContent = 'A enviar...';
@@ -2652,16 +2703,39 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (!res.ok) throw new Error('Erro na resposta');
+      if (!res.ok) {
+        // O servidor manda a razão exata em { error, missing } — mostra-a em vez de um erro genérico.
+        let detalhe = null;
+        try { detalhe = await res.json(); } catch (e) { /* resposta sem JSON */ }
+        if (detalhe && Array.isArray(detalhe.missing) && detalhe.missing.length) {
+          const ids = detalhe.missing.map(k => KEY_TO_ID[k]).filter(Boolean);
+          say('error', '⚠️ Falta preencher: ' + ids.map(id => LABEL[id]).join(', '));
+          flag(ids);
+          return;
+        }
+        if (detalhe && detalhe.error === 'Email inválido') {
+          say('error', '⚠️ Email inválido — falta o @ ou o domínio (exemplo: nome@gmflow.pt)');
+          flag(['f-email']);
+          return;
+        }
+        const e = new Error(detalhe && detalhe.error ? detalhe.error : '');
+        e.doServidor = true;
+        throw e;
+      }
       submitted = true;
       say('success', '✅ Dados enviados com sucesso! A GM Flow já os recebeu.');
       btnText.textContent = '✓ Enviado!';
       form.reset();
       refresh();
     } catch (err) {
-      btn.disabled = false;
-      btnText.textContent = 'Enviar Dados';
-      say('error', '❌ Erro ao enviar. Tenta novamente ou contacta o Filipe.');
+      say('error', err && err.doServidor && err.message
+        ? '❌ ' + err.message
+        : '❌ Não foi possível enviar. Verifica a ligação à internet e tenta novamente.');
+    } finally {
+      if (!submitted) {
+        btn.disabled = false;
+        btnText.textContent = 'Enviar Dados';
+      }
     }
   });
 
