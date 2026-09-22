@@ -1,41 +1,42 @@
 /**
  * POST /api/onboarding
  *
- * Recebe o formulário da secção 8 e grava o registo no Airtable.
+ * Recebe o formulário da secção 8 e manda os dados ao Filipe por DM no Slack.
  *
- * O token NUNCA chega ao browser: vive apenas em process.env, configurado em
+ * O Slack é o destino. O Airtable é opcional e está desligado por omissão:
+ * só é usado se AIRTABLE_TABLE apontar para uma tabela que já exista. Nada
+ * aqui cria tabelas nem campos.
+ *
+ * Os tokens NUNCA chegam ao browser: vivem em process.env, configurados em
  * Vercel → Settings → Environment Variables.
  *
- * Grava no Airtable e avisa o Filipe por DM no Slack.
- *
- * Variáveis necessárias:
- *   AIRTABLE_TOKEN     (obrigatória)  PAT com scope data.records:write
- *   AIRTABLE_BASE_ID   (opcional)     default: app8jKzf1mSn3mv8l
- *   AIRTABLE_TABLE     (opcional)     default: GM Flow — Onboarding
- *   SLACK_BOT_TOKEN    (opcional)     bot token (xoxb-) com scope chat:write
+ * Variáveis:
+ *   SLACK_BOT_TOKEN    (obrigatória)  bot token (xoxb-) com scope chat:write
  *   SLACK_AVISO_PARA   (opcional)     default: U09UW9UHLGG (Filipe Almeida)
- *
- * O aviso do Slack leva APENAS o nome e a data. O NIF, o IBAN e a morada nunca
- * saem do Airtable: um canal ou DM de Slack fica no histórico para sempre, é
- * pesquisável e sincroniza para os telemóveis. Quem precisa dos dados vai à base.
+ *   AIRTABLE_TABLE     (opcional)     nome da tabela. Vazio = não grava
+ *   AIRTABLE_TOKEN     (só com a de cima)  PAT com scope data.records:write
+ *   AIRTABLE_BASE_ID   (opcional)     default: app8jKzf1mSn3mv8l
  */
 
 const DEFAULT_BASE = 'app8jKzf1mSn3mv8l';
-const DEFAULT_TABLE = 'GM Flow — Onboarding';
 const DEFAULT_AVISO_PARA = 'U09UW9UHLGG'; // Filipe Almeida
 
-const LIMITS = {
-  nome: 120,
-  email: 160,
-  telemovel: 40,
-  nif: 20,
-  morada: 300,
-  iban: 60,
-  faculdade: 160,
-  curso: 160,
-};
-
-const REQUIRED = ['nome', 'email', 'telemovel', 'nif', 'morada', 'iban'];
+/**
+ * Os campos pela ordem das colunas da tabela Equipa do Airtable
+ * (Nome · NIF · IBAN · Email · Telemóvel), e a seguir os que essa tabela não
+ * tem. É esta a ordem da mensagem do Slack e do registo, para se lerem os dois
+ * da mesma maneira.
+ */
+const CAMPOS = [
+  { chave: 'nome', etiqueta: 'Nome', max: 120, obrigatorio: true },
+  { chave: 'nif', etiqueta: 'NIF', max: 20, obrigatorio: true },
+  { chave: 'iban', etiqueta: 'IBAN', max: 60, obrigatorio: true },
+  { chave: 'email', etiqueta: 'Email', max: 160, obrigatorio: true },
+  { chave: 'telemovel', etiqueta: 'Telemóvel', max: 40, obrigatorio: true },
+  { chave: 'morada', etiqueta: 'Morada', max: 300, obrigatorio: true },
+  { chave: 'faculdade', etiqueta: 'Faculdade', max: 160, obrigatorio: false },
+  { chave: 'curso', etiqueta: 'Curso', max: 160, obrigatorio: false },
+];
 
 const clean = (value, max) =>
   typeof value === 'string' ? value.trim().replace(/\s+/g, ' ').slice(0, max) : '';
@@ -46,9 +47,8 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
-  const token = process.env.AIRTABLE_TOKEN;
-  if (!token) {
-    console.error('AIRTABLE_TOKEN não está definida nas Environment Variables.');
+  if (!process.env.SLACK_BOT_TOKEN) {
+    console.error('SLACK_BOT_TOKEN não está definida nas Environment Variables.');
     return res.status(500).json({ error: 'Servidor mal configurado' });
   }
 
@@ -56,9 +56,9 @@ module.exports = async function handler(req, res) {
   const body = typeof req.body === 'string' ? safeParse(req.body) : req.body || {};
 
   const input = {};
-  for (const [key, max] of Object.entries(LIMITS)) input[key] = clean(body[key], max);
+  for (const campo of CAMPOS) input[campo.chave] = clean(body[campo.chave], campo.max);
 
-  const missing = REQUIRED.filter((key) => !input[key]);
+  const missing = CAMPOS.filter((c) => c.obrigatorio && !input[c.chave]).map((c) => c.chave);
   if (missing.length) {
     return res.status(400).json({ error: 'Campos obrigatórios em falta', missing });
   }
@@ -66,20 +66,92 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Email inválido' });
   }
 
-  const fields = {
-    'Nome Completo': input.nome,
-    'Email': input.email,
-    'Telemóvel': input.telemovel,
-    'NIF': input.nif,
-    'Morada': input.morada,
-    'IBAN': input.iban,
-    'Data de Submissão': new Date().toISOString().slice(0, 10),
-  };
-  if (input.faculdade) fields['Faculdade'] = input.faculdade;
-  if (input.curso) fields['Curso'] = input.curso;
+  const data = new Date().toISOString().slice(0, 10);
+
+  // O Slack é o destino: se falhar, os dados perdem-se e quem preencheu tem de
+  // saber. Por isso este erro sobe, ao contrário do Airtable mais abaixo.
+  const enviado = await enviarParaSlack(input, data);
+  if (!enviado) {
+    return res.status(502).json({ error: 'Não foi possível registar os dados' });
+  }
+
+  // Opcional e desligado por omissão. Um erro aqui não falha o pedido: os dados
+  // já chegaram ao Filipe.
+  await gravarNoAirtable(input, data);
+
+  return res.status(200).json({ ok: true });
+};
+
+function safeParse(raw) {
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    return {};
+  }
+}
+
+/**
+ * Manda a DM ao Filipe com os dados, um campo por linha.
+ * Devolve true se o Slack confirmou a entrega.
+ */
+async function enviarParaSlack(input, data) {
+  const para = process.env.SLACK_AVISO_PARA || DEFAULT_AVISO_PARA;
+
+  const linhas = CAMPOS
+    .filter((c) => input[c.chave])
+    .map((c) => `*${c.etiqueta}:* ${input[c.chave]}`)
+    .join('\n');
+
+  try {
+    const resposta = await fetch('https://slack.com/api/chat.postMessage', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`,
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+      body: JSON.stringify({
+        channel: para,
+        text: `Novo onboarding preenchido: ${input.nome}`,
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `:clipboard: *Novo onboarding preenchido* — ${data}\n\n${linhas}`,
+            },
+          },
+        ],
+      }),
+    });
+
+    // O Slack responde 200 mesmo quando recusa; o que conta é o campo "ok".
+    const corpo = await resposta.json();
+    if (!corpo.ok) {
+      console.error('Slack recusou a mensagem:', corpo.error);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error('Não foi possível contactar o Slack:', err);
+    return false;
+  }
+}
+
+/**
+ * Grava no Airtable, se e só se AIRTABLE_TABLE estiver configurada com o nome
+ * de uma tabela que já exista. Nunca lança.
+ */
+async function gravarNoAirtable(input, data) {
+  const table = process.env.AIRTABLE_TABLE;
+  const token = process.env.AIRTABLE_TOKEN;
+  if (!table || !token) return; // Desligado: é o estado normal.
+
+  const fields = { 'Data de Submissão': data };
+  for (const campo of CAMPOS) {
+    if (input[campo.chave]) fields[campo.etiqueta] = input[campo.chave];
+  }
 
   const baseId = process.env.AIRTABLE_BASE_ID || DEFAULT_BASE;
-  const table = process.env.AIRTABLE_TABLE || DEFAULT_TABLE;
   const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}`;
 
   try {
@@ -93,78 +165,9 @@ module.exports = async function handler(req, res) {
     });
 
     if (!airtable.ok) {
-      // Log fica nas Vercel Functions Logs; a resposta ao cliente não revela detalhes.
       console.error('Airtable respondeu', airtable.status, await airtable.text());
-      return res.status(502).json({ error: 'Não foi possível gravar o registo' });
     }
-
-    // O registo já está guardado. Se o Slack falhar, não se perde nada e não se
-    // devolve erro a quem preencheu — só fica o log.
-    await avisarSlack(input.nome, fields['Data de Submissão']);
-
-    return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('Erro ao contactar o Airtable:', err);
-    return res.status(502).json({ error: 'Não foi possível gravar o registo' });
-  }
-}
-
-function safeParse(raw) {
-  try {
-    return JSON.parse(raw);
-  } catch (err) {
-    return {};
-  }
-}
-
-/**
- * Manda uma DM ao Filipe a dizer que alguém preencheu.
- *
- * Só o nome e a data — ver a nota no topo do ficheiro sobre porque é que os
- * dados sensíveis ficam de fora. Nunca lança: um erro aqui não pode fazer
- * falhar uma submissão que já foi gravada.
- */
-async function avisarSlack(nome, data) {
-  const token = process.env.SLACK_BOT_TOKEN;
-  if (!token) return; // Slack por configurar: segue sem aviso.
-
-  const para = process.env.SLACK_AVISO_PARA || DEFAULT_AVISO_PARA;
-
-  try {
-    const resposta = await fetch('https://slack.com/api/chat.postMessage', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-      body: JSON.stringify({
-        channel: para,
-        text: `Novo onboarding preenchido: ${nome} (${data})`,
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `:clipboard: *Novo onboarding preenchido*\n*${nome}* — ${data}`,
-            },
-          },
-          {
-            type: 'context',
-            elements: [
-              {
-                type: 'mrkdwn',
-                text: 'NIF, IBAN e morada ficaram no Airtable. Este aviso não os leva.',
-              },
-            ],
-          },
-        ],
-      }),
-    });
-
-    // O Slack responde 200 mesmo quando recusa; o que conta é o campo "ok".
-    const corpo = await resposta.json();
-    if (!corpo.ok) console.error('Slack recusou o aviso:', corpo.error);
-  } catch (err) {
-    console.error('Não foi possível avisar o Slack:', err);
   }
 }
