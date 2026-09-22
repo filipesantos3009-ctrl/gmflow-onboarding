@@ -923,11 +923,35 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 .fase.c::before { background: linear-gradient(180deg, var(--g3), var(--g1)); }
 
 /* ---------- 14. Organograma ---------- */
-.org { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 44px); }
+.org { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 44px); width: 100%; align-items: start; }
 @media (max-width: 900px) { .org { grid-template-columns: 1fr; gap: var(--s8); } }
 
 .branch { display: grid; justify-items: center; --c: var(--g1); }
 .branch.b { --c: var(--g2); }
+.branch.c { --c: var(--g3); }
+
+.org-wrap { display: grid; justify-items: center; }
+.org-top, .org-base { width: 100%; display: grid; justify-items: center; }
+.org-top .founder { background: linear-gradient(135deg, #7B57E8, #5636BE); width: min(340px, 100%); }
+.branch.b .founder { background: linear-gradient(135deg, #2563C9, #0F7C8C); }
+.branch.c .founder { background: linear-gradient(135deg, #0F7C8C, #12855F); }
+.org-bar { width: 100%; height: 2px; background: var(--border); margin: 22px 0 0; }
+.org-base .card {
+  width: 100%;
+  text-align: center;
+  padding: 16px 20px;
+  border-style: dashed;
+}
+.org-base .name { font-weight: 600; font-size: var(--fs-sm); color: var(--text); }
+.org-base .role { font-size: var(--fs-xs); color: var(--text-3); margin-top: 2px; }
+.org-base .scope { font-size: var(--fs-xs); color: var(--text-2); margin-top: 8px; }
+.vaga {
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  border: 1px dashed color-mix(in oklab, var(--c) 30%, var(--border));
+}
 
 .founder {
   width: min(280px, 100%);
@@ -1733,12 +1757,12 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     </div>
     <div class="toc">
       <a href="#section-1"><span class="glyph-tile sm" aria-hidden="true">🏢</span><span class="txt"><span class="t">Quem Somos</span><span class="s">Os Nossos Pilares</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
-      <a href="#section-2"><span class="glyph-tile sm" aria-hidden="true">🎯</span><span class="txt"><span class="t">O Nosso Cliente Ideal</span><span class="s">ICP, Setores e Modelo</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
+      <a href="#section-2"><span class="glyph-tile sm" aria-hidden="true">🎯</span><span class="txt"><span class="t">O Nosso Cliente Ideal</span><span class="s">ICP e Setores Prioritários</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-3"><span class="glyph-tile sm" aria-hidden="true">👥</span><span class="txt"><span class="t">Quem é Quem</span><span class="s">Estrutura da Equipa</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-4"><span class="glyph-tile sm" aria-hidden="true">🛠️</span><span class="txt"><span class="t">Ferramentas &amp; Acesso</span><span class="s">Stack Tecnológico</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-5"><span class="glyph-tile sm" aria-hidden="true">💬</span><span class="txt"><span class="t">Como Nos Comunicamos</span><span class="s">Escalada e Reuniões</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-cultura"><span class="glyph-tile sm" aria-hidden="true">🧬</span><span class="txt"><span class="t">A Cultura GM Flow</span><span class="s">Como Somos a Trabalhar</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
-      <a href="#section-6"><span class="glyph-tile sm" aria-hidden="true">📊</span><span class="txt"><span class="t">Da Lead ao Contrato</span><span class="s">Workflow de Vendas</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
+      <a href="#section-6"><span class="glyph-tile sm" aria-hidden="true">📊</span><span class="txt"><span class="t">Da Lead ao Contrato</span><span class="s">Do Lead à Manutenção</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-7"><span class="glyph-tile sm" aria-hidden="true">📞</span><span class="txt"><span class="t">Quem Contactar</span><span class="s">Responsabilidades por Área</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-8"><span class="glyph-tile sm" aria-hidden="true">📋</span><span class="txt"><span class="t">Informação Administrativa</span><span class="s">Dados Pessoais</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
       <a href="#section-9"><span class="glyph-tile sm" aria-hidden="true">✅</span><span class="txt"><span class="t">Teu Primeiro Dia</span><span class="s">Checklist</span></span><span class="arw" aria-hidden="true"><svg><use href="#i-arrow-r"/></svg></span></a>
@@ -1829,43 +1853,6 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       <button class="chip" type="button" aria-pressed="false"><span class="em" aria-hidden="true">💳</span> Mediação de Crédito</button>
     </div>
 
-    <h3 class="blk">Modelo de Negócio</h3>
-    <div class="grid-2">
-      <div class="card fase">
-        <div class="fase-top">
-          <span class="badge">Fase 1</span>
-          <h4>Diagnóstico</h4>
-          <span class="price">C1 → C4</span>
-        </div>
-        <p class="txt">Levantamento com quem executa o trabalho, construção do mapa da operação, ida ao terreno e uma semana de medição nos processos validados. Fecha com o <strong>Retrato de Operações</strong>, apresentado na C4 — cada número com a origem à vista, para o cliente corrigir e assinar.</p>
-      </div>
-      <div class="card fase b">
-        <div class="fase-top">
-          <span class="badge">Fase 2</span>
-          <h4>Desenho da Solução</h4>
-          <span class="price">C5 → C8</span>
-        </div>
-        <p class="txt">Onde está o motor do método: <strong>DOWNTIME</strong> para caçar desperdício e <strong>E(S)AM</strong> — Eliminar → Simplificar → Standardizar → Automatizar → Manter humano — corrido por esta ordem. Nunca se automatiza um processo que não está standardizado. Saem dois entregáveis: o <strong>Manual do LEGO</strong> (a solução peça a peça, sem preços) e, depois dele, a <strong>Proposta de Investimento</strong>.</p>
-      </div>
-      <div class="card fase c">
-        <div class="fase-top">
-          <span class="badge">Fase 3</span>
-          <h4>Implementação</h4>
-          <span class="price">Custom</span>
-        </div>
-        <p class="txt">Desenvolvimento custom, workflows <strong>n8n</strong>, integrações com sistemas existentes. Entrega na infraestrutura do cliente com documentação completa. O Manual do LEGO da Fase 2 é o escopo técnico a partir do qual se constrói.</p>
-      </div>
-    </div>
-
-    <div class="callout">
-      <svg aria-hidden="true"><use href="#i-alert"/></svg>
-      <p><strong>Como se forma o preço:</strong> profundidade, não escalões. Não há pacotes fixos — o que varia é a fundura do trabalho, em função da complexidade da empresa e da intensidade que o cliente quer e pode pagar. Quem dimensiona é o closer, na venda. O valor cobre a <strong>Fase 1 e a Fase 2 em conjunto</strong>; a Fase 3 orçamenta-se à parte. <strong>Nenhuma proposta financeira sai sem revisão do Guilherme.</strong></p>
-    </div>
-
-    <div class="callout warn">
-      <svg aria-hidden="true"><use href="#i-alert"/></svg>
-      <p><strong>Duas regras que não se negoceiam:</strong> não se vende implementação direta — um cliente que já chegue com o problema clarificado passa pela consultoria na mesma, o que muda é o preço. E o piso da Fase 1 são <strong>quatro reuniões</strong>, sempre. Duração a comunicar ao cliente: um mês no mínimo, na maioria dos casos mais de dois.</p>
-    </div>
   </section>
 
   <!-- ══════════ 3. Quem é Quem ══════════ -->
@@ -1873,57 +1860,78 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     <div class="section-head">
       <p class="idx">03</p>
       <h2>Quem é Quem</h2>
-      <p class="sub">A estrutura da GM Flow organiza-se em torno dos dois founders — cada um com a sua esfera de influência direta.</p>
+      <p class="sub">Um bloco por cada pessoa de C-level, com a equipa dela por baixo. O Filipe é transversal: apanha tudo.</p>
     </div>
 
-    <div class="org">
-      <div class="branch">
+    <div class="org-wrap">
+      <div class="org-top">
         <div class="founder">
           <div class="name">Guilherme Gomes</div>
           <div class="role">Founder &amp; CEO · Sales · Estratégia</div>
         </div>
         <i class="stem" aria-hidden="true"></i>
-        <i class="tee" aria-hidden="true"><i></i><i></i></i>
-        <div class="l1">
-          <div class="card"><div class="name">Filipe Almeida</div><div class="role">Assessor Executivo</div></div>
-          <div class="card"><div class="name">Rodrigo Ameixa</div><div class="role">Sales Director</div></div>
-        </div>
-        <i class="stem" aria-hidden="true"></i>
-        <div class="team">
-          <p class="label">Consultores &amp; Comerciais</p>
-          <div class="people">
-            <span class="person">Pedro Ventura</span>
-            <span class="person">Gustavo Gonçalves</span>
-            <span class="person">Tomás Mestre</span>
+      </div>
+
+      <div class="org">
+        <div class="branch">
+          <div class="founder">
+            <div class="name">Rodrigo Ameixa</div>
+            <div class="role">Diretor Comercial · Sales</div>
           </div>
-          <p class="label">Cold Caller</p>
-          <div class="people">
-            <span class="person">Manuel Nascimento</span>
+          <i class="stem" aria-hidden="true"></i>
+          <div class="team">
+            <p class="label">Cold Callers</p>
+            <div class="people"><span class="vaga">por preencher</span></div>
+            <p class="label">Closers</p>
+            <div class="people"><span class="vaga">por preencher</span></div>
+          </div>
+        </div>
+
+        <div class="branch b">
+          <div class="founder">
+            <div class="name">Gonçalo Martins</div>
+            <div class="role">COO · Consultoria</div>
+          </div>
+          <i class="stem" aria-hidden="true"></i>
+          <div class="team">
+            <p class="label">Consultores</p>
+            <div class="people">
+              <span class="person">Gustavo Gonçalves</span>
+              <span class="person">Tomás Mestre</span>
+              <span class="person">Georgii Lavrov</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch c">
+          <div class="founder">
+            <div class="name">Mateus Aguiar</div>
+            <div class="role">Founder &amp; CTO · Tecnologia · Implementação</div>
+          </div>
+          <i class="stem" aria-hidden="true"></i>
+          <div class="team">
+            <p class="label">Gestão de Projeto</p>
+            <div class="people"><span class="person">Miguel Pereira</span></div>
+            <p class="label">Developers</p>
+            <div class="people">
+              <span class="person">Simão Louré</span>
+              <span class="person">Bernardo Carvalho</span>
+              <span class="person">João Leal</span>
+              <span class="person">Madalena Yang</span>
+              <span class="person">Madalena Mota</span>
+              <span class="vaga">+ freelancers por projeto</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="branch b">
-        <div class="founder">
-          <div class="name">Mateus Aguiar</div>
-          <div class="role">Founder &amp; CTO · Tecnologia · Arquitetura</div>
-        </div>
+      <div class="org-bar" aria-hidden="true"></div>
+      <div class="org-base">
         <i class="stem" aria-hidden="true"></i>
-        <i class="tee" aria-hidden="true"><i></i><i></i></i>
-        <div class="l1">
-          <div class="card"><div class="name">Gonçalo Martins</div><div class="role">COO · Produto de Consultoria</div></div>
-          <div class="card"><div class="name">Miguel Pereira</div><div class="role">PM Development</div></div>
-        </div>
-        <i class="stem" aria-hidden="true"></i>
-        <div class="team">
-          <p class="label">Developers</p>
-          <div class="people">
-            <span class="person">Simão Louré</span>
-            <span class="person">Bernardo Carvalho</span>
-            <span class="person">João Leal</span>
-            <span class="person">Madalena Yang</span>
-            <span class="person">Madalena Mota</span>
-          </div>
+        <div class="card">
+          <div class="name">Filipe Almeida</div>
+          <div class="role">Assessor Executivo</div>
+          <p class="scope">Atravessa as três frentes — consultoria, implementação e sales — além de finanças e operações.</p>
         </div>
       </div>
     </div>
@@ -2050,19 +2058,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       </div>
     </div>
 
-    <h3 class="blk">Reuniões Fixas</h3>
-    <div class="meet">
-      <span class="when"><span class="em" aria-hidden="true">☀️</span> Segunda-feira às 18:00</span>
-      <h4>GM Meet</h4>
-      <p class="who">Toda a GM Flow (obrigatória).</p>
-      <div class="tags">
-        <span>Atualizações</span><span>Celebrações</span><span>Decisões</span><span>Roadmap</span>
-      </div>
-      <p class="dur">~30-45 minutos</p>
-      <p class="stress">Esta é a reunião mais importante. Estamos todos presentes.</p>
-    </div>
-
-    <h3 class="blk">Outras Reuniões</h3>
+    <h3 class="blk">Reuniões</h3>
     <div class="prose">
       <p>Standups de Departamento conforme agendado pelo teu líder — 1-on-1s Bi-semanais para feedback e growth — Technical Reviews para code e decisões — Client Kickoffs quando começamos projetos novos.</p>
     </div>
@@ -2114,7 +2110,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     <div class="section-head">
       <p class="idx">06</p>
       <h2>Da Lead ao Contrato</h2>
-      <p class="sub">O workflow de um Lead passa por uma jornada transformadora, onde cada etapa é crítica e estratégica:</p>
+      <p class="sub">Da primeira lead até à manutenção. Cada etapa tem dono, entregáveis próprios e um momento certo para acontecer:</p>
     </div>
 
     <div class="timeline" id="timeline">
@@ -2186,17 +2182,92 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 
       <div class="step-group">
         <button class="step" type="button" aria-expanded="false" aria-controls="tl-6">
-          <span class="node" aria-hidden="true">🚀</span>
+          <span class="node" aria-hidden="true">🔍</span>
           <span>
             <span class="n">06</span>
-            <h4>Scoping &amp; Implementação</h4>
-            <span class="tag-l">De contrato a execução</span>
+            <h4>Fase 1 — Diagnóstico</h4>
+            <span class="tag-l">Consultoria · reuniões C1 a C4</span>
           </span>
           <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
         </button>
-        <div class="step-panel" id="tl-6"><div><p class="inner">O escopo não se desenha do zero: <strong>o Manual do LEGO que saiu da Fase 2 é o escopo técnico</strong> — leva lá dentro a arquitetura, a stack, as funcionalidades e o plano de implementação. Com o contrato assinado, a Fase 3 arranca a partir dele: divisão de tarefas, prazos por fase e milestones. <strong>O dono da Fase 2 é o PM do projeto</strong> e é no arranque da Fase 3 que o contacto do cliente passa formalmente para quem gere a implementação. A partir daqui, standups regulares, checkpoints e testes.</p></div></div>
+        <div class="step-panel" id="tl-6"><div><p class="inner">Com o contrato assinado, arranca a consultoria. A Fase 1 é o diagnóstico e corre nas reuniões <strong>C1 a C4</strong> — as reuniões numeram-se de C1 a C8 ao longo de toda a consultoria, cada uma com nome. Faz-se o levantamento com <strong>quem executa o trabalho</strong>, fechando os quatro pilares: problema e valor · âmbito e linhas vermelhas · condições e dependências · quem executa e quem vai usar. Depois constrói-se internamente o <strong>mapa da operação</strong>, alinha-se na C3 onde o diagnóstico vai a fundo, vai-se ao <strong>terreno</strong> pelo menos uma vez e faz-se <strong>uma semana de medição</strong> nos processos validados. Fecha na C4 com o <strong>Retrato de Operações</strong>: cada número com a origem à vista, o cliente corrige e assina. <strong>O piso são quatro reuniões, sempre.</strong></p></div></div>
       </div>
 
+      <div class="step-group">
+        <button class="step" type="button" aria-expanded="false" aria-controls="tl-7">
+          <span class="node" aria-hidden="true">🧩</span>
+          <span>
+            <span class="n">07</span>
+            <h4>Fase 2 — Desenho da Solução</h4>
+            <span class="tag-l">Consultoria · reuniões C5 a C8</span>
+          </span>
+          <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
+        </button>
+        <div class="step-panel" id="tl-7"><div><p class="inner">É aqui que está o motor do método: <strong>DOWNTIME</strong> para caçar desperdício no que existe, e <strong>E(S)AM</strong> — Eliminar → Simplificar → Standardizar → Automatizar → Manter humano — corrido por esta ordem, com o catálogo de heurísticas. <strong>Nunca se automatiza um processo que não está standardizado.</strong> Mostra-se o rumo antes de investir no detalhe (C5 Validação de Direção), põe-se a solução à prova com o cliente (C6 Sessão de Teste), e saem os dois entregáveis: o <strong>Manual do LEGO</strong> na C7 — a solução peça a peça, já com arquitetura, stack e plano de implementação lá dentro, e sem preços — e a <strong>Proposta de Investimento</strong> na C8, que converte em euros cada recurso que o Manual mostrou. A ordem não é arrumação: o cliente só consegue justificar o investimento depois de já ter a solução montada na cabeça.</p></div></div>
+      </div>
+
+      <div class="step-group">
+        <button class="step" type="button" aria-expanded="false" aria-controls="tl-8">
+          <span class="node" aria-hidden="true">🔀</span>
+          <span>
+            <span class="n">08</span>
+            <h4>A Decisão do Cliente</h4>
+            <span class="tag-l">Avançar connosco, ou não</span>
+          </span>
+          <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
+        </button>
+        <div class="step-panel" id="tl-8"><div><p class="inner">A C8 é a <strong>última chamada da consultoria</strong> e é onde o cliente decide. Vão o consultor-chefe e o <strong>Guilherme</strong> — é quem negocia, quem pode falar de outros clientes e quem pode pôr incentivos em cima da mesa. A proposta mostra o valor total, o custo de implementar, e depois o preço de implementar <strong>connosco</strong>, mais baixo porque já sabemos tudo o que é preciso fazer. Se ele decidir levar a solução para outro lado, leva: <strong>os entregáveis são do cliente, avance ou não.</strong> Se avançar, assina o contrato de implementação e o <strong>Manual do LEGO entra como Anexo I — Escopo Técnico</strong>. Quem o assina pela GM Flow é o Mateus.</p></div></div>
+      </div>
+
+      <div class="step-group">
+        <button class="step" type="button" aria-expanded="false" aria-controls="tl-9">
+          <span class="node" aria-hidden="true">🚀</span>
+          <span>
+            <span class="n">09</span>
+            <h4>Fase 3 — Implementação</h4>
+            <span class="tag-l">O Mateus é o responsável</span>
+          </span>
+          <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
+        </button>
+        <div class="step-panel" id="tl-9"><div><p class="inner">O responsável é o <strong>Mateus Aguiar</strong>. O <strong>Miguel Pereira</strong> entra como PM e contratam-se <strong>freelancers</strong>, cada um alocado a pontos do Escopo Técnico pelo seu próprio anexo. O escopo tem dois níveis: a <strong>fase</strong>, que é a unidade contratual e leva prazo e milestone, e o <strong>ponto</strong>, que é a unidade operacional e leva identificador estável e estimativa de horas. Os milestones escreve-os o PM e <strong>o Mateus valida sempre</strong>, na assinatura. Os prazos contam-se em <strong>dias úteis</strong> — um dia útil vale oito horas úteis, para o cliente não ter de fazer contas. A partir daqui, standups, checkpoints e testes até ao go-live.</p></div></div>
+      </div>
+
+      <div class="step-group">
+        <button class="step" type="button" aria-expanded="false" aria-controls="tl-10">
+          <span class="node" aria-hidden="true">🩺</span>
+          <span>
+            <span class="n">10</span>
+            <h4>Hypercare</h4>
+            <span class="tag-l">Acompanhamento próximo depois do go-live</span>
+          </span>
+          <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
+        </button>
+        <div class="step-panel" id="tl-10"><div><p class="inner">Entregue não é acabado. O hypercare tem <strong>cláusula própria no contrato</strong> e <strong>prazo próprio</strong>, definido projeto a projeto — deixou de viver escondido dentro do plano de pagamentos precisamente para não se perder de vista. É a janela em que se apanham os atritos que só aparecem com a solução a correr a sério no dia a dia de quem a usa, e em que se corrige sem drama.</p></div></div>
+      </div>
+
+      <div class="step-group">
+        <button class="step" type="button" aria-expanded="false" aria-controls="tl-11">
+          <span class="node" aria-hidden="true">🔧</span>
+          <span>
+            <span class="n">11</span>
+            <h4>Manutenção</h4>
+            <span class="tag-l">Opcional, e contratada à parte</span>
+          </span>
+          <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
+        </button>
+        <div class="step-panel" id="tl-11"><div><p class="inner">Se o cliente a contratar, o contrato tem <strong>dois ramos à escolha: avença mensal ou bolsas de horas</strong>. Quando existe, tem um <strong>developer de manutenção</strong> atribuído, uma cadência de faturação e uma duração acordada. Fica registada no Airtable, na tabela Projetos, com os períodos contratados e os já recebidos — é o que permite saber a qualquer momento o que há a cobrar.</p></div></div>
+      </div>
+
+    </div>
+
+    <div class="callout">
+      <svg aria-hidden="true"><use href="#i-alert"/></svg>
+      <p><strong>Como se forma o preço:</strong> profundidade, não escalões. Não há pacotes fixos — o que varia é a fundura do trabalho, em função da complexidade da empresa e da intensidade que o cliente quer e pode pagar. Quem dimensiona é o closer, na venda. O valor cobre a <strong>Fase 1 e a Fase 2 em conjunto</strong>; a Fase 3 orçamenta-se à parte. <strong>Nenhuma proposta financeira sai sem revisão do Guilherme.</strong></p>
+    </div>
+
+    <div class="callout warn">
+      <svg aria-hidden="true"><use href="#i-alert"/></svg>
+      <p><strong>Duas regras que não se negoceiam:</strong> não se vende implementação direta — um cliente que já chegue com o problema clarificado passa pela consultoria na mesma, o que muda é o preço. E o piso da Fase 1 são <strong>quatro reuniões</strong>, sempre. Duração a comunicar ao cliente: um mês no mínimo, na maioria dos casos mais de dois.</p>
     </div>
   </section>
 
@@ -2215,7 +2286,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         </thead>
         <tbody>
           <tr>
-            <td data-l="Área"><span class="area">Estratégia &amp; Consultoria</span></td>
+            <td data-l="Área"><span class="area">Estratégia &amp; Administração</span></td>
             <td data-l="Responsável"><span class="who">Guilherme Gomes</span></td>
             <td data-l="Contacto"><div class="contacts">
               <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@Guilherme Gomes</span>
@@ -2231,7 +2302,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
             </div></td>
           </tr>
           <tr>
-            <td data-l="Área"><span class="area">Finanças &amp; Ops</span></td>
+            <td data-l="Área"><span class="area">Finanças &amp; Operações</span></td>
             <td data-l="Responsável"><span class="who">Filipe Almeida</span></td>
             <td data-l="Contacto"><div class="contacts">
               <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@Filipe Almeida</span>
@@ -2247,7 +2318,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
             </div></td>
           </tr>
           <tr>
-            <td data-l="Área"><span class="area">Operações</span></td>
+            <td data-l="Área"><span class="area">Consultoria &amp; Ops</span></td>
             <td data-l="Responsável"><span class="who">Gonçalo Martins</span></td>
             <td data-l="Contacto"><div class="contacts">
               <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@Gonçalo Martins</span>
@@ -2330,11 +2401,12 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
   <section class="section wrap" id="section-9">
     <div class="section-head">
       <p class="idx">09</p>
-      <h2>Teu Primeiro Dia — Checklist</h2>
+      <h2>O Teu Primeiro Dia — Checklist</h2>
+      <p class="sub">Oito coisas para tratares. A checklist só fica completa depois de teres preenchido os teus dados na secção 8.</p>
     </div>
 
     <div class="check-head">
-      <span class="check-count" id="checkCount">0 / 9</span>
+      <span class="check-count" id="checkCount">0 / 8</span>
       <span class="check-bar" aria-hidden="true"><i id="checkBar"></i></span>
     </div>
 
@@ -2342,47 +2414,42 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       <label class="check" for="check1">
         <input type="checkbox" id="check1">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Após receberes isto do Filipe</strong><p>Ele entrará em contacto contigo para coordenar tudo.</p></span>
+        <span class="txt"><strong>Lê este documento até ao fim</strong><p>Antes de tudo o resto. Está aqui o que precisas de saber para a primeira semana — quem é quem, como se comunica, e como corre um projeto do princípio ao fim.</p></span>
       </label>
       <label class="check" for="check2">
         <input type="checkbox" id="check2">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Setup de Acesso</strong><p>Slack, Airtable, Notion, GitHub, n8n, Google Drive — dependendo do que precisares para a tua função.</p></span>
+        <span class="txt"><strong>Preenche os teus dados</strong><p>Na secção 8, aqui mesmo em cima. Nome, NIF, IBAN, morada, telemóvel e, se fores estudante, faculdade e curso. Carregas em <strong>Enviar Dados</strong> e chegam diretos ao Filipe — não precisas de mandar nada por mensagem nem por email.</p></span>
       </label>
       <label class="check" for="check3">
         <input type="checkbox" id="check3">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Foto de Perfil</strong><p>Profissional no Slack e mandar ao Filipe para ser colocada no site.</p></span>
+        <span class="txt"><strong>Entra no Slack</strong><p>Aceita o convite e apresenta-te. O Slack é o escritório: é lá que se decide, se pede e se atualiza.</p></span>
       </label>
       <label class="check" for="check4">
         <input type="checkbox" id="check4">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Introdução</strong><p>Falar com o Filipe e esclarecer as questões que tiveres.</p></span>
+        <span class="txt"><strong>Mete foto de perfil</strong><p>Uma foto profissional no Slack, e manda-a também ao Filipe para entrar no site.</p></span>
       </label>
       <label class="check" for="check5">
         <input type="checkbox" id="check5">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Google Calendar</strong><p>Configura e prepara para começar a dar uso.</p></span>
+        <span class="txt"><strong>Pede os acessos de que precisas</strong><p>Diz ao Filipe quais fazem sentido para a tua função — Airtable, Notion, GitHub, n8n, Google Drive. Ele coordena tudo.</p></span>
       </label>
       <label class="check" for="check6">
         <input type="checkbox" id="check6">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Envia Dados</strong><p>NIF, IBAN, morada, faculdade, curso a Filipe.</p></span>
+        <span class="txt"><strong>Configura o Google Calendar</strong><p>Aceita o convite e mantém a agenda atualizada. É por aí que te marcam reuniões.</p></span>
       </label>
       <label class="check" for="check7">
         <input type="checkbox" id="check7">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Lê Este Documento</strong><p>Completo.</p></span>
+        <span class="txt"><strong>Fala com o Filipe</strong><p>Marca uma conversa para tirar as dúvidas que te ficaram do documento e do arranque.</p></span>
       </label>
       <label class="check" for="check8">
         <input type="checkbox" id="check8">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Nota a Data</strong><p>Segunda às 18h é GM Meet (obrigatória).</p></span>
-      </label>
-      <label class="check" for="check9">
-        <input type="checkbox" id="check9">
-        <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Esperar pela Marcação 1-on-1</strong><p>Com teu líder direto esta semana.</p></span>
+        <span class="txt"><strong>Espera pela marcação do 1-on-1</strong><p>Com o teu líder direto, ainda esta semana.</p></span>
       </label>
     </div>
 
