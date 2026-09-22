@@ -929,14 +929,15 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
    ou uma equipa tenha mais gente. */
 .org {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   grid-template-rows: auto auto 1fr;
-  gap: clamp(20px, 3vw, 44px);
+  gap: clamp(14px, 1.6vw, 22px);
   width: 100%;
   align-items: stretch;
 }
-@media (max-width: 900px) {
-  .org { grid-template-columns: 1fr; grid-template-rows: none; gap: var(--s8); }
+@media (max-width: 1180px) { .org { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 820px) {
+  .org { grid-template-columns: 1fr; grid-template-rows: none; gap: var(--s6); }
   .branch { grid-row: auto; grid-template-rows: auto auto auto; }
 }
 
@@ -961,25 +962,19 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 
 .org-wrap { display: grid; justify-items: center; }
 .org-top { width: 100%; display: grid; justify-items: center; }
-.org-top .founder { background: linear-gradient(135deg, #6D42E0, #45269E); }
-.branch .founder { background: linear-gradient(135deg, #7B57E8, #4F63D8); }
+.branch.ceo .founder { background: linear-gradient(135deg, #6D42E0, #45269E); }
+.branch.d .founder { background: linear-gradient(135deg, #7B57E8, #4F63D8); }
 .branch.b .founder { background: linear-gradient(135deg, #2563C9, #0F7C8C); }
+.branch.d { --c: var(--g1); }
+.branch.ceo { --c: var(--g1); }
+.branch.t { --c: var(--g2); }
 .branch.c .founder { background: linear-gradient(135deg, #0F7C8C, #12855F); }
 
 /* O Filipe atravessa as três frentes, e o gradiente dele percorre as três
    cores da marca de ponta a ponta. */
-.founder.transversal {
-  background: linear-gradient(110deg, #7B57E8 0%, #3E7BD8 50%, #17916B 100%);
-}
-/* Fora do cartão, para os cinco ficarem exatamente da mesma altura. */
-.org-scope {
-  max-width: 420px;
-  margin: 10px 0 0;
-  text-align: center;
-  font-size: var(--fs-xs);
-  color: var(--text-3);
-  line-height: 1.6;
-}
+.branch.t .founder { background: linear-gradient(110deg, #7B57E8 0%, #3E7BD8 50%, #17916B 100%); }
+.team .nota { font-size: var(--fs-xs); color: var(--text-2); line-height: 1.65; margin: 0; }
+.founder .name { overflow-wrap: anywhere; }
 .vaga {
   padding: 5px 12px;
   border-radius: var(--r-pill);
@@ -989,7 +984,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 }
 
 .founder {
-  width: min(300px, 100%);
+  width: 100%;
   min-height: 84px;
   display: grid;
   align-content: center;
@@ -1001,6 +996,9 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
   background: linear-gradient(135deg, #7B57E8, #5636BE);
 }
 .branch.b .founder { background: linear-gradient(135deg, #2563C9, #0F7C8C); }
+.branch.d { --c: var(--g1); }
+.branch.ceo { --c: var(--g1); }
+.branch.t { --c: var(--g2); }
 .founder .name { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; letter-spacing: -.02em; }
 .founder .role { font-size: var(--fs-2xs); opacity: .85; margin-top: 3px; letter-spacing: .02em; }
 
@@ -1898,36 +1896,47 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     <div class="section-head">
       <p class="idx">03</p>
       <h2>Quem é Quem</h2>
-      <p class="sub">Um bloco por cada pessoa de C-level, com a equipa dela por baixo. O Filipe é transversal: apanha tudo.</p>
+      <p class="sub">Um bloco por cada pessoa de C-level, com a equipa dela por baixo.</p>
     </div>
 
-    <div class="org-wrap">
-      <div class="org-top">
-        <div class="founder">
-          <div class="name">Guilherme Gomes</div>
-          <div class="role">Founder &amp; CEO · Sales · Estratégia</div>
+    <div class="org">
+        <div class="branch ceo">
+          <div class="founder">
+            <div class="name">Guilherme Gomes</div>
+            <div class="role">Founder &amp; CEO</div>
+          </div>
+          <i class="stem" aria-hidden="true"></i>
+          <div class="team">
+            <p class="nota">Sales e estratégia. Fecha os clientes e é quem revê qualquer proposta financeira antes de sair.</p>
+          </div>
         </div>
-        <i class="stem" aria-hidden="true"></i>
-        <div class="founder transversal">
-          <div class="name">Filipe Almeida</div>
-          <div class="role">Assessor Executivo</div>
-        </div>
-        <p class="org-scope">Atravessa consultoria, implementação e sales, além de finanças e operações.</p>
-        <i class="stem" aria-hidden="true"></i>
-      </div>
 
-      <div class="org">
-        <div class="branch">
+        <div class="branch t">
+          <div class="founder">
+            <div class="name">Filipe Almeida</div>
+            <div class="role">Assessor Executivo</div>
+          </div>
+          <i class="stem" aria-hidden="true"></i>
+          <div class="team">
+            <p class="nota">Transversal: atravessa consultoria, implementação e sales, além de finanças e operações.</p>
+          </div>
+        </div>
+
+        <div class="branch d">
           <div class="founder">
             <div class="name">Rodrigo Ameixa</div>
-            <div class="role">Diretor Comercial · Sales</div>
+            <div class="role">Diretor Comercial</div>
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
             <p class="label">Cold Callers</p>
-            <div class="people"><span class="vaga">por preencher</span></div>
+            <div class="people">
+              <span class="vaga">por preencher</span>
+            </div>
             <p class="label">Closers</p>
-            <div class="people"><span class="vaga">por preencher</span></div>
+            <div class="people">
+              <span class="vaga">por preencher</span>
+            </div>
           </div>
         </div>
 
@@ -1950,12 +1959,14 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <div class="branch c">
           <div class="founder">
             <div class="name">Mateus Aguiar</div>
-            <div class="role">Founder &amp; CTO · Implementação</div>
+            <div class="role">Founder &amp; CTO</div>
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
             <p class="label">Gestão de Projeto</p>
-            <div class="people"><span class="person">Miguel Pereira</span></div>
+            <div class="people">
+              <span class="person">Miguel Pereira</span>
+            </div>
             <p class="label">Developers</p>
             <div class="people">
               <span class="person">Simão Louré</span>
@@ -1963,11 +1974,10 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
               <span class="person">João Leal</span>
               <span class="person">Madalena Yang</span>
               <span class="person">Madalena Mota</span>
-              <span class="vaga">+ freelancers por projeto</span>
+              <span class="vaga">+ freelancers</span>
             </div>
           </div>
         </div>
-      </div>
 
     </div>
   </section>
