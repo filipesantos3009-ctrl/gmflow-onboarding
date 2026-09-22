@@ -961,7 +961,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 
 .org-wrap { display: grid; justify-items: center; }
 .org-top { width: 100%; display: grid; justify-items: center; }
-.org-top .founder { background: linear-gradient(135deg, #6D42E0, #45269E); width: min(340px, 100%); }
+.org-top .founder { background: linear-gradient(135deg, #6D42E0, #45269E); }
 .branch .founder { background: linear-gradient(135deg, #7B57E8, #4F63D8); }
 .branch.b .founder { background: linear-gradient(135deg, #2563C9, #0F7C8C); }
 .branch.c .founder { background: linear-gradient(135deg, #0F7C8C, #12855F); }
@@ -969,14 +969,16 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 /* O Filipe atravessa as três frentes, e o gradiente dele percorre as três
    cores da marca de ponta a ponta. */
 .founder.transversal {
-  width: min(420px, 100%);
   background: linear-gradient(110deg, #7B57E8 0%, #3E7BD8 50%, #17916B 100%);
 }
-.founder.transversal .scope {
-  font-size: var(--fs-2xs);
-  opacity: .88;
-  margin-top: 7px;
-  line-height: 1.5;
+/* Fora do cartão, para os cinco ficarem exatamente da mesma altura. */
+.org-scope {
+  max-width: 420px;
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--text-3);
+  line-height: 1.6;
 }
 .vaga {
   padding: 5px 12px;
@@ -987,7 +989,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 }
 
 .founder {
-  width: min(280px, 100%);
+  width: min(300px, 100%);
   min-height: 84px;
   display: grid;
   align-content: center;
@@ -1909,8 +1911,8 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <div class="founder transversal">
           <div class="name">Filipe Almeida</div>
           <div class="role">Assessor Executivo</div>
-          <p class="scope">Atravessa consultoria, implementação e sales, além de finanças e operações.</p>
         </div>
+        <p class="org-scope">Atravessa consultoria, implementação e sales, além de finanças e operações.</p>
         <i class="stem" aria-hidden="true"></i>
       </div>
 
