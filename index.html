@@ -973,7 +973,8 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 /* O Filipe atravessa as três frentes, e o gradiente dele percorre as três
    cores da marca de ponta a ponta. */
 .branch.t .founder { background: linear-gradient(110deg, #7B57E8 0%, #3E7BD8 50%, #17916B 100%); }
-.team .nota { font-size: var(--fs-xs); color: var(--text-2); line-height: 1.65; margin: 0; }
+.team .nota { font-size: var(--fs-xs); color: var(--text-2); line-height: 1.6; margin: 0; }
+.vaga { display: inline-block; }
 .founder .name { overflow-wrap: anywhere; }
 .vaga {
   padding: 5px 12px;
@@ -1896,7 +1897,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     <div class="section-head">
       <p class="idx">03</p>
       <h2>Quem é Quem</h2>
-      <p class="sub">Um bloco por cada pessoa de C-level, com a equipa dela por baixo.</p>
+      <p class="sub">Um bloco por cada pessoa de C-level: o que faz, e por quem é responsável.</p>
     </div>
 
     <div class="org">
@@ -1907,7 +1908,13 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
-            <p class="nota">Sales e estratégia. Fecha os clientes e é quem revê qualquer proposta financeira antes de sair.</p>
+            <p class="label">O que faz</p>
+            <p class="nota">Fecha os clientes nas R1 e R2 e produz as propostas, orçamentos, contratos e NDAs. Nenhuma proposta financeira sai sem passar por ele.</p>
+            <p class="label">Responsável por</p>
+            <div class="people">
+              <span class="person">Toda a equipa</span>
+              <span class="person">Operações exteriores</span>
+            </div>
           </div>
         </div>
 
@@ -1918,7 +1925,13 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
-            <p class="nota">Transversal: atravessa consultoria, implementação e sales, além de finanças e operações.</p>
+            <p class="label">O que faz</p>
+            <p class="nota">Finanças e operações. Atravessa consultoria, implementação e sales — é o ponto de ligação entre as três frentes.</p>
+            <p class="label">Responsável por</p>
+            <div class="people">
+              <span class="person">Toda a equipa</span>
+              <span class="person">Operações exteriores</span>
+            </div>
           </div>
         </div>
 
@@ -1929,13 +1942,12 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
-            <p class="label">Cold Callers</p>
+            <p class="label">O que faz</p>
+            <p class="nota">Pipeline e vendas, do primeiro contacto ao fecho. Trabalha a base de leads e garante que nenhuma fica por tocar.</p>
+            <p class="label">Responsável por</p>
             <div class="people">
-              <span class="vaga">por preencher</span>
-            </div>
-            <p class="label">Closers</p>
-            <div class="people">
-              <span class="vaga">por preencher</span>
+              <span class="vaga">Cold Callers — por preencher</span>
+              <span class="vaga">Closers — por preencher</span>
             </div>
           </div>
         </div>
@@ -1947,7 +1959,9 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
-            <p class="label">Consultores</p>
+            <p class="label">O que faz</p>
+            <p class="nota">Dono do produto de consultoria. Desenha o método e a Fase 1, e valida o que sai para o cliente.</p>
+            <p class="label">Responsável por</p>
             <div class="people">
               <span class="person">Gustavo Gonçalves</span>
               <span class="person">Tomás Mestre</span>
@@ -1963,12 +1977,11 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
-            <p class="label">Gestão de Projeto</p>
+            <p class="label">O que faz</p>
+            <p class="nota">Líder técnico e da entrega. Assina o Escopo Técnico e valida sempre os milestones antes de a implementação arrancar.</p>
+            <p class="label">Responsável por</p>
             <div class="people">
-              <span class="person">Miguel Pereira</span>
-            </div>
-            <p class="label">Developers</p>
-            <div class="people">
+              <span class="person">Miguel Pereira · PM</span>
               <span class="person">Simão Louré</span>
               <span class="person">Bernardo Carvalho</span>
               <span class="person">João Leal</span>
