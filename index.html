@@ -923,28 +923,61 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 .fase.c::before { background: linear-gradient(180deg, var(--g3), var(--g1)); }
 
 /* ---------- 14. Organograma ---------- */
-.org { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 44px); width: 100%; align-items: start; }
-@media (max-width: 900px) { .org { grid-template-columns: 1fr; gap: var(--s8); } }
+/* As três linhas (cartão · traço · equipa) vivem na grelha-mãe e cada ramo
+   herda-as com subgrid. É isso que põe os três cartões, os três traços e as
+   três caixas exatamente à mesma altura, mesmo que um cargo ocupe duas linhas
+   ou uma equipa tenha mais gente. */
+.org {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto 1fr;
+  gap: clamp(20px, 3vw, 44px);
+  width: 100%;
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .org { grid-template-columns: 1fr; grid-template-rows: none; gap: var(--s8); }
+  .branch { grid-row: auto; grid-template-rows: auto auto auto; }
+}
 
-.branch { display: grid; justify-items: center; --c: var(--g1); }
+/* grid-template-rows garante que o cartão, o traço e a caixa da equipa
+   começam à mesma altura nos três ramos; o 1fr faz a caixa esticar até
+   ao fundo, para os três blocos acabarem alinhados. */
+.branch {
+  display: grid;
+  grid-row: span 3;
+  grid-template-rows: subgrid;
+  justify-items: center;
+  --c: var(--g1);
+}
+/* Sem subgrid, os blocos continuam a esticar — só deixam de alinhar a meio. */
+@supports not (grid-template-rows: subgrid) {
+  .branch { grid-row: auto; grid-template-rows: auto auto 1fr; }
+  .org { grid-template-rows: none; }
+}
 .branch.b { --c: var(--g2); }
 .branch.c { --c: var(--g3); }
+.branch .team { align-self: stretch; }
 
 .org-wrap { display: grid; justify-items: center; }
-.org-top, .org-base { width: 100%; display: grid; justify-items: center; }
-.org-top .founder { background: linear-gradient(135deg, #7B57E8, #5636BE); width: min(340px, 100%); }
+.org-top { width: 100%; display: grid; justify-items: center; }
+.org-top .founder { background: linear-gradient(135deg, #6D42E0, #45269E); width: min(340px, 100%); }
+.branch .founder { background: linear-gradient(135deg, #7B57E8, #4F63D8); }
 .branch.b .founder { background: linear-gradient(135deg, #2563C9, #0F7C8C); }
 .branch.c .founder { background: linear-gradient(135deg, #0F7C8C, #12855F); }
-.org-bar { width: 100%; height: 2px; background: var(--border); margin: 22px 0 0; }
-.org-base .card {
-  width: 100%;
-  text-align: center;
-  padding: 16px 20px;
-  border-style: dashed;
+
+/* O Filipe atravessa as três frentes, e o gradiente dele percorre as três
+   cores da marca de ponta a ponta. */
+.founder.transversal {
+  width: min(420px, 100%);
+  background: linear-gradient(110deg, #7B57E8 0%, #3E7BD8 50%, #17916B 100%);
 }
-.org-base .name { font-weight: 600; font-size: var(--fs-sm); color: var(--text); }
-.org-base .role { font-size: var(--fs-xs); color: var(--text-3); margin-top: 2px; }
-.org-base .scope { font-size: var(--fs-xs); color: var(--text-2); margin-top: 8px; }
+.founder.transversal .scope {
+  font-size: var(--fs-2xs);
+  opacity: .88;
+  margin-top: 7px;
+  line-height: 1.5;
+}
 .vaga {
   padding: 5px 12px;
   border-radius: var(--r-pill);
@@ -955,6 +988,9 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
 
 .founder {
   width: min(280px, 100%);
+  min-height: 84px;
+  display: grid;
+  align-content: center;
   padding: 16px 22px;
   border-radius: var(--r-lg);
   text-align: center;
@@ -1870,6 +1906,12 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           <div class="role">Founder &amp; CEO · Sales · Estratégia</div>
         </div>
         <i class="stem" aria-hidden="true"></i>
+        <div class="founder transversal">
+          <div class="name">Filipe Almeida</div>
+          <div class="role">Assessor Executivo</div>
+          <p class="scope">Atravessa consultoria, implementação e sales, além de finanças e operações.</p>
+        </div>
+        <i class="stem" aria-hidden="true"></i>
       </div>
 
       <div class="org">
@@ -1906,7 +1948,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <div class="branch c">
           <div class="founder">
             <div class="name">Mateus Aguiar</div>
-            <div class="role">Founder &amp; CTO · Tecnologia · Implementação</div>
+            <div class="role">Founder &amp; CTO · Implementação</div>
           </div>
           <i class="stem" aria-hidden="true"></i>
           <div class="team">
@@ -1925,15 +1967,6 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         </div>
       </div>
 
-      <div class="org-bar" aria-hidden="true"></div>
-      <div class="org-base">
-        <i class="stem" aria-hidden="true"></i>
-        <div class="card">
-          <div class="name">Filipe Almeida</div>
-          <div class="role">Assessor Executivo</div>
-          <p class="scope">Atravessa as três frentes — consultoria, implementação e sales — além de finanças e operações.</p>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -2402,11 +2435,11 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     <div class="section-head">
       <p class="idx">09</p>
       <h2>O Teu Primeiro Dia — Checklist</h2>
-      <p class="sub">Oito coisas para tratares. A checklist só fica completa depois de teres preenchido os teus dados na secção 8.</p>
+      <p class="sub">Sete coisas para tratares. A checklist só fica completa depois de teres preenchido os teus dados na secção 8.</p>
     </div>
 
     <div class="check-head">
-      <span class="check-count" id="checkCount">0 / 8</span>
+      <span class="check-count" id="checkCount">0 / 7</span>
       <span class="check-bar" aria-hidden="true"><i id="checkBar"></i></span>
     </div>
 
@@ -2443,11 +2476,6 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       </label>
       <label class="check" for="check7">
         <input type="checkbox" id="check7">
-        <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
-        <span class="txt"><strong>Fala com o Filipe</strong><p>Marca uma conversa para tirar as dúvidas que te ficaram do documento e do arranque.</p></span>
-      </label>
-      <label class="check" for="check8">
-        <input type="checkbox" id="check8">
         <span class="box" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
         <span class="txt"><strong>Espera pela marcação do 1-on-1</strong><p>Com o teu líder direto, ainda esta semana.</p></span>
       </label>

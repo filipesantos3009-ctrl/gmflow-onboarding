@@ -2,30 +2,22 @@
  * POST /api/onboarding
  *
  * Recebe o formulário da secção 8 e manda os dados ao Filipe por DM no Slack.
+ * O Slack é o único destino: não se grava em mais lado nenhum.
  *
- * O Slack é o destino. O Airtable é opcional e está desligado por omissão:
- * só é usado se AIRTABLE_TABLE apontar para uma tabela que já exista. Nada
- * aqui cria tabelas nem campos.
- *
- * Os tokens NUNCA chegam ao browser: vivem em process.env, configurados em
+ * O token NUNCA chega ao browser: vive em process.env, configurado em
  * Vercel → Settings → Environment Variables.
  *
  * Variáveis:
  *   SLACK_BOT_TOKEN    (obrigatória)  bot token (xoxb-) com scope chat:write
  *   SLACK_AVISO_PARA   (opcional)     default: U09UW9UHLGG (Filipe Almeida)
- *   AIRTABLE_TABLE     (opcional)     nome da tabela. Vazio = não grava
- *   AIRTABLE_TOKEN     (só com a de cima)  PAT com scope data.records:write
- *   AIRTABLE_BASE_ID   (opcional)     default: app8jKzf1mSn3mv8l
  */
 
-const DEFAULT_BASE = 'app8jKzf1mSn3mv8l';
 const DEFAULT_AVISO_PARA = 'U09UW9UHLGG'; // Filipe Almeida
 
 /**
- * Os campos pela ordem das colunas da tabela Equipa do Airtable
- * (Nome · NIF · IBAN · Email · Telemóvel), e a seguir os que essa tabela não
- * tem. É esta a ordem da mensagem do Slack e do registo, para se lerem os dois
- * da mesma maneira.
+ * A ordem em que os campos aparecem na mensagem do Slack. Segue a ordem das
+ * colunas da tabela Equipa (Nome · NIF · IBAN · Email · Telemóvel), para quem
+ * lê a DM e quem lê a tabela ver a mesma sequência.
  */
 const CAMPOS = [
   { chave: 'nome', etiqueta: 'Nome', max: 120, obrigatorio: true },
@@ -68,16 +60,11 @@ module.exports = async function handler(req, res) {
 
   const data = new Date().toISOString().slice(0, 10);
 
-  // O Slack é o destino: se falhar, os dados perdem-se e quem preencheu tem de
-  // saber. Por isso este erro sobe, ao contrário do Airtable mais abaixo.
+  // Se o Slack falhar, os dados perdem-se e quem preencheu tem de saber.
   const enviado = await enviarParaSlack(input, data);
   if (!enviado) {
     return res.status(502).json({ error: 'Não foi possível registar os dados' });
   }
-
-  // Opcional e desligado por omissão. Um erro aqui não falha o pedido: os dados
-  // já chegaram ao Filipe.
-  await gravarNoAirtable(input, data);
 
   return res.status(200).json({ ok: true });
 };
@@ -134,40 +121,5 @@ async function enviarParaSlack(input, data) {
   } catch (err) {
     console.error('Não foi possível contactar o Slack:', err);
     return false;
-  }
-}
-
-/**
- * Grava no Airtable, se e só se AIRTABLE_TABLE estiver configurada com o nome
- * de uma tabela que já exista. Nunca lança.
- */
-async function gravarNoAirtable(input, data) {
-  const table = process.env.AIRTABLE_TABLE;
-  const token = process.env.AIRTABLE_TOKEN;
-  if (!table || !token) return; // Desligado: é o estado normal.
-
-  const fields = { 'Data de Submissão': data };
-  for (const campo of CAMPOS) {
-    if (input[campo.chave]) fields[campo.etiqueta] = input[campo.chave];
-  }
-
-  const baseId = process.env.AIRTABLE_BASE_ID || DEFAULT_BASE;
-  const url = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(table)}`;
-
-  try {
-    const airtable = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ fields }),
-    });
-
-    if (!airtable.ok) {
-      console.error('Airtable respondeu', airtable.status, await airtable.text());
-    }
-  } catch (err) {
-    console.error('Erro ao contactar o Airtable:', err);
   }
 }
