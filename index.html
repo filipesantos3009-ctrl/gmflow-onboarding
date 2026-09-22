@@ -919,6 +919,8 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
   background: linear-gradient(180deg, var(--g1), var(--g2));
 }
 .fase.b::before { background: linear-gradient(180deg, var(--g2), var(--g3)); }
+.fase.c .price { color: var(--ink-teal); }
+.fase.c::before { background: linear-gradient(180deg, var(--g3), var(--g1)); }
 
 /* ---------- 14. Organograma ---------- */
 .org { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 44px); }
@@ -1709,7 +1711,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <div>
           <p class="kicker">Teu Onboarding Buddy</p>
           <p class="name">Filipe Almeida</p>
-          <p class="role">Diretor Financeiro &amp; Operações</p>
+          <p class="role">C-level · Assessor Executivo</p>
           <div class="rows">
             <a href="mailto:filipesantos3009@gmail.com"><svg aria-hidden="true"><use href="#i-mail"/></svg>filipesantos3009@gmail.com</a>
             <a href="tel:+351934609238"><svg aria-hidden="true"><use href="#i-phone"/></svg>934 609 238</a>
@@ -1832,19 +1834,37 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
       <div class="card fase">
         <div class="fase-top">
           <span class="badge">Fase 1</span>
-          <h4>Consultoria</h4>
-          <span class="price">1.000€ +IVA</span>
+          <h4>Diagnóstico</h4>
+          <span class="price">C1 → C4</span>
         </div>
-        <p class="txt">Análise profunda de <strong>3–5 processos críticos</strong> usando o nosso framework <strong>EAOL</strong> (Eliminar / Otimizar / Automatizar / Manter Humano). O cliente recebe um documento detalhado com diagnóstico, prioridades e proposta de solução.</p>
+        <p class="txt">Levantamento com quem executa o trabalho, construção do mapa da operação, ida ao terreno e uma semana de medição nos processos validados. Fecha com o <strong>Retrato de Operações</strong>, apresentado na C4 — cada número com a origem à vista, para o cliente corrigir e assinar.</p>
       </div>
       <div class="card fase b">
         <div class="fase-top">
           <span class="badge">Fase 2</span>
+          <h4>Desenho da Solução</h4>
+          <span class="price">C5 → C8</span>
+        </div>
+        <p class="txt">Onde está o motor do método: <strong>DOWNTIME</strong> para caçar desperdício e <strong>E(S)AM</strong> — Eliminar → Simplificar → Standardizar → Automatizar → Manter humano — corrido por esta ordem. Nunca se automatiza um processo que não está standardizado. Saem dois entregáveis: o <strong>Manual do LEGO</strong> (a solução peça a peça, sem preços) e, depois dele, a <strong>Proposta de Investimento</strong>.</p>
+      </div>
+      <div class="card fase c">
+        <div class="fase-top">
+          <span class="badge">Fase 3</span>
           <h4>Implementação</h4>
           <span class="price">Custom</span>
         </div>
-        <p class="txt">Desenvolvimento custom, workflows <strong>n8n</strong>, integrações com sistemas existentes. Entrega na infraestrutura do cliente com documentação completa. Preço baseado no escopo definido na Fase 1.</p>
+        <p class="txt">Desenvolvimento custom, workflows <strong>n8n</strong>, integrações com sistemas existentes. Entrega na infraestrutura do cliente com documentação completa. O Manual do LEGO da Fase 2 é o escopo técnico a partir do qual se constrói.</p>
       </div>
+    </div>
+
+    <div class="callout">
+      <svg aria-hidden="true"><use href="#i-alert"/></svg>
+      <p><strong>Como se forma o preço:</strong> profundidade, não escalões. Não há pacotes fixos — o que varia é a fundura do trabalho, em função da complexidade da empresa e da intensidade que o cliente quer e pode pagar. Quem dimensiona é o closer, na venda. O valor cobre a <strong>Fase 1 e a Fase 2 em conjunto</strong>; a Fase 3 orçamenta-se à parte. <strong>Nenhuma proposta financeira sai sem revisão do Guilherme.</strong></p>
+    </div>
+
+    <div class="callout warn">
+      <svg aria-hidden="true"><use href="#i-alert"/></svg>
+      <p><strong>Duas regras que não se negoceiam:</strong> não se vende implementação direta — um cliente que já chegue com o problema clarificado passa pela consultoria na mesma, o que muda é o preço. E o piso da Fase 1 são <strong>quatro reuniões</strong>, sempre. Duração a comunicar ao cliente: um mês no mínimo, na maioria dos casos mais de dois.</p>
     </div>
   </section>
 
@@ -1865,7 +1885,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <i class="stem" aria-hidden="true"></i>
         <i class="tee" aria-hidden="true"><i></i><i></i></i>
         <div class="l1">
-          <div class="card"><div class="name">Filipe Almeida</div><div class="role">Dir. Financeiro &amp; Ops</div></div>
+          <div class="card"><div class="name">Filipe Almeida</div><div class="role">C-level · Assessor Executivo</div></div>
           <div class="card"><div class="name">Rodrigo Ameixa</div><div class="role">Sales Director</div></div>
         </div>
         <i class="stem" aria-hidden="true"></i>
@@ -1891,7 +1911,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <i class="stem" aria-hidden="true"></i>
         <i class="tee" aria-hidden="true"><i></i><i></i></i>
         <div class="l1">
-          <div class="card"><div class="name">Gonçalo Martins</div><div class="role">Dir. Operações</div></div>
+          <div class="card"><div class="name">Gonçalo Martins</div><div class="role">COO · Produto de Consultoria</div></div>
           <div class="card"><div class="name">Miguel Pereira</div><div class="role">PM Development</div></div>
         </div>
         <i class="stem" aria-hidden="true"></i>
@@ -1931,7 +1951,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
     </div>
     <div class="callout warn">
       <svg aria-hidden="true"><use href="#i-alert"/></svg>
-      <p><strong>Importante:</strong> Não discutes trabalho fora do Slack. WhatsApp é apenas para emergências reais.</p>
+      <p><strong>Importante:</strong> Não discutes trabalho fora do Slack. O WhatsApp fica para emergências reais — e para o que for sensível, que vai sempre por aí.</p>
     </div>
 
     <p class="label"><span class="em" aria-hidden="true">📋</span> CRM &amp; Base de Dados</p>
@@ -2025,7 +2045,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
         <div class="hd"><span class="glyph-tile sm" aria-hidden="true">↩️</span> Responder dentro da Resposta</div>
         <div class="bd">
           <span class="tag">Threads</span>
-          <p>Responder na conversa tem como objetivo manter o canal limpo, com as mensagens importantes visíveis e respostas em secções escondidas — evita o scroll extensivo para encontrar mensagens que foram enviadas à 3 dias</p>
+          <p>Responder na conversa tem como objetivo manter o canal limpo, com as mensagens importantes visíveis e respostas em secções escondidas — evita o scroll extensivo para encontrar mensagens que foram enviadas há 3 dias</p>
         </div>
       </div>
     </div>
@@ -2174,7 +2194,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
           </span>
           <span class="chev" aria-hidden="true"><svg><use href="#i-chevron-d"/></svg></span>
         </button>
-        <div class="step-panel" id="tl-6"><div><p class="inner">Com o contrato assinado, <strong>fazemos a primeira reunião de escopo do projeto</strong> — aqui refinamos detalhes, desenhamos arquitectura, definimos timelines e <strong>apresentamos o plano de implementação</strong>. A partir daqui, começa o verdadeiro trabalho: <strong>a implementação</strong>. Reuniões de standups regulares, checkpoints, testes, e um resultado que vai além das expectativas.</p></div></div>
+        <div class="step-panel" id="tl-6"><div><p class="inner">O escopo não se desenha do zero: <strong>o Manual do LEGO que saiu da Fase 2 é o escopo técnico</strong> — leva lá dentro a arquitetura, a stack, as funcionalidades e o plano de implementação. Com o contrato assinado, a Fase 3 arranca a partir dele: divisão de tarefas, prazos por fase e milestones. <strong>O dono da Fase 2 é o PM do projeto</strong> e é no arranque da Fase 3 que o contacto do cliente passa formalmente para quem gere a implementação. A partir daqui, standups regulares, checkpoints e testes.</p></div></div>
       </div>
 
     </div>
@@ -2231,7 +2251,7 @@ h3.blk:first-child, .section-head + h3.blk { margin-top: 0; }
             <td data-l="Responsável"><span class="who">Gonçalo Martins</span></td>
             <td data-l="Contacto"><div class="contacts">
               <span class="tag-slack"><span class="em" aria-hidden="true">💬</span>@Gonçalo Martins</span>
-              <a class="tag-mail" href="mailto:goncalomartins@gmflow.pt"><span class="em" aria-hidden="true">✉️</span>goncalomartins@gmflow.pt</a>
+              <a class="tag-mail" href="mailto:goncalo.martins@gmflow.pt"><span class="em" aria-hidden="true">✉️</span>goncalo.martins@gmflow.pt</a>
             </div></td>
           </tr>
         </tbody>
